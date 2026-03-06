@@ -1,0 +1,138 @@
+import { useState, useEffect, useRef } from "react";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
+import { api } from "../api/http";
+import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar } from "lucide-react";
+import logo from "../assets/logo.png";
+
+const NAV_ITEMS = [
+  { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/> },
+  { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/> },
+  { to: "/inventory/create", label: "Create Item", icon: <Plus size={18}/> },
+  { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/> },
+  { to: "/zones", label: "Zones", icon: <Grid size={18}/> },
+  { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/> },
+  { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> },
+  { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> },
+];
+
+export function AppLayout() {
+  const { user, logout } = useAuthStore();
+  const navigate          = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // ── Ahintha TODO: Movement polling ───────────────────────────────────────────────────────
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
+
+  return (
+    <div className="flex min-h-screen w-screen overflow-x-hidden bg-background text-foreground">
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[199] lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* ── Sidebar ── */}
+      <aside className={`
+        fixed top-0 left-0 h-screen w-[220px] bg-card border-r border-border
+        flex flex-col z-[200] transition-transform duration-200
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0
+      `}>
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 px-4 py-5 border-b border-border">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-base flex-shrink-0">
+            <div className="login-logo-icon"><img src={logo} alt="AxaCrate" style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain" }} /></div>
+          </div>
+          <div>
+            <div className="font-mono font-bold text-sm leading-tight">AxaCrate</div>
+            <div className="text-[11px] text-muted-foreground font-light">Warehouse Platform</div>
+          </div>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-2.5 py-3 flex flex-col gap-0.5 overflow-y-auto">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 py-2 pt-3">
+            Navigation
+          </div>
+          {NAV_ITEMS.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) => `
+                flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all
+                ${isActive
+                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-transparent"
+                }
+              `}
+            >
+              <span className="w-5 text-center text-[15px]">{item.icon}</span>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="p-3.5 border-t border-border">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2.5 flex-wrap">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-foreground font-medium truncate">{user?.username}</span>
+            <span className="ml-auto text-[10px] bg-muted border border-border px-1.5 py-0.5 rounded">
+              {user?.role}
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full py-2 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 rounded-md hover:bg-red-500/20 transition-colors"
+          >
+            ⎋ Sign Out
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main ── */}
+      <main className="flex-1 flex flex-col min-h-screen lg:ml-[220px] w-full lg:w-[calc(100vw-220px)]">
+
+        {/* Header */}
+        <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              className="lg:hidden p-1.5 rounded-md text-muted-foreground hover:bg-muted"
+              onClick={() => setSidebarOpen(o => !o)}
+            >☰</button>
+            <span className="text-xs text-muted-foreground truncate">AxaCrate /</span>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <NavLink
+              to="/inventory/create"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors"
+            >
+              + New Item
+            </NavLink>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-xs font-bold">
+              {initials}
+            </div>
+          </div>
+        </header>
+
+        {/* Page content — each page renders here */}
+        <div className="flex-1 p-5">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Ahintha TODO: Movement toasts — bottom right */}
+
+    </div>
+  );
+}
