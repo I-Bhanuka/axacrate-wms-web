@@ -32,9 +32,9 @@ React + TypeScript frontend for Warehouse Management System.
 - `/src/types` - TypeScript type definitions
 
 ## Team Members & Responsibilities
-- [Member 1] - Dashboard & Charts
-- [Member 2] - Inventory List & Filters
-- [Member 3] - Movemennt table
-- [Member 4] - Zone CRUD
-- [Member 5] - GeoFencing and Report
-- [Member 6] - Login and alert
+- Isith Bhanuka     - Dashboard & Charts
+- Sheshan Thisal    - Inventory Item CRUD
+- Aatif Noor        - Zone CRUD
+- Pulindu De Silva  - Login and alert
+- Daniru Senarathne - GeoFencing and Tag Health
+- Ishan Ahintha     - Movemennt table and Report Generation 
