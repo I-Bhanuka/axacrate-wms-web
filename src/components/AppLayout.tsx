@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { api } from "../api/http";
 import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose } from "lucide-react";
@@ -20,6 +20,16 @@ export function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Page title management
+  const location = useLocation();
+
+  const currentNav = NAV_ITEMS.find(items => 
+    location.pathname.startsWith(items.to)
+  );
+
+  const pageTitle = currentNav?.label || "";
+
 
   // ── Ahintha TODO: Movement polling ───────────────────────────────────────────────────────
 
@@ -122,7 +132,11 @@ export function AppLayout() {
                 <Menu />
             </button>
 
-            <span className="text-xs text-muted-foreground truncate">AxaCrate /</span>
+            {/* Page title */}
+            <span className="text-xs text-muted-foreground truncate">
+              AxaCrate / {pageTitle}
+            </span>
+
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
 
