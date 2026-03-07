@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { api } from "../api/http";
-import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar } from "lucide-react";
+import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose } from "lucide-react";
 import logo from "../assets/logo.png";
 
 const NAV_ITEMS = [
@@ -18,7 +18,7 @@ const NAV_ITEMS = [
 
 export function AppLayout() {
   const { user, logout } = useAuthStore();
-  const navigate          = useNavigate();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ── Ahintha TODO: Movement polling ───────────────────────────────────────────────────────
@@ -34,22 +34,29 @@ export function AppLayout() {
     <div className="flex min-h-screen w-screen overflow-x-hidden bg-background text-foreground">
 
       {/* Mobile overlay */}
+      {/* When screen >= 1024px,  hide this element */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[199] lg:hidden"
+          className="fixed inset-0 bg-neutral-900/50 z-[199] lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* ── Sidebar ── */}
       <aside className={`
-        fixed top-0 left-0 h-screen w-[220px] bg-card border-r border-border
+        fixed top-0 left-0 h-screen w-[220px] bg-background border-r border-border
         flex flex-col z-[200] transition-transform duration-200
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0
       `}>
+        <button
+        className="lg:hidden absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+        onClick={() => setSidebarOpen(false)}
+      >
+        <PanelLeftClose  size={18} />
+      </button>
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-4 py-5 border-b border-border">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-base flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center text-base flex-shrink-0">
             <div className="login-logo-icon"><img src={logo} alt="AxaCrate" style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain" }} /></div>
           </div>
           <div>
@@ -82,7 +89,7 @@ export function AppLayout() {
           ))}
         </nav>
 
-        {/* Footer */}
+        {/* Side bar Footer */}
         <div className="p-3.5 border-t border-border">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2.5 flex-wrap">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -93,9 +100,10 @@ export function AppLayout() {
           </div>
           <button
             onClick={handleLogout}
-            className="w-full py-2 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 rounded-md hover:bg-red-500/20 transition-colors"
+            className="w-full py-2 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 rounded-md hover:bg-red-500/20 transition-colors flex items-center justify-center gap-2"
           >
-            ⎋ Sign Out
+            <LogOut size={16} />
+            Sign Out
           </button>
         </div>
       </aside>
@@ -106,19 +114,26 @@ export function AppLayout() {
         {/* Header */}
         <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10 gap-3">
           <div className="flex items-center gap-3 min-w-0">
+
+            {/* When screen >= 1024px,  hide this element */}
             <button
               className="lg:hidden p-1.5 rounded-md text-muted-foreground hover:bg-muted"
-              onClick={() => setSidebarOpen(o => !o)}
-            >☰</button>
+              onClick={() => setSidebarOpen(o => !o)}>
+                <Menu />
+            </button>
+
             <span className="text-xs text-muted-foreground truncate">AxaCrate /</span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+
+            {/* Shortcut to create inventory item */}
             <NavLink
               to="/inventory/create"
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors"
             >
-              + New Item
+              <><Plus size={16} style={{ marginRight: 6 }} />New Item</>
             </NavLink>
+
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-xs font-bold">
               {initials}
             </div>
@@ -127,7 +142,10 @@ export function AppLayout() {
 
         {/* Page content — each page renders here */}
         <div className="flex-1 p-5">
+
+          {/*  Outlet is where child routes render. */}
           <Outlet />
+          
         </div>
       </main>
 
