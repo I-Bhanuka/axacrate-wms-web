@@ -11,9 +11,9 @@ import { DashboardPage }  from "./pages/DashboardPage";
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
+    <QueryClientProvider client={queryClient}> {/* Wrap the app with React Query provider for data fetching/catch rules */}
+      <BrowserRouter> {/* Wrap the app with React Router for URL management */}
+        <Routes> {/* Define all routes in the app here. */}
 
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />

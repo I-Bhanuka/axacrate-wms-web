@@ -11,7 +11,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { StatCard } from "../components/ui/StatCard";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
-import { Package, Hash, AlertTriangle, Warehouse } from "lucide-react";
+import { Package, Hash, AlertTriangle, Warehouse, RotateCcw } from "lucide-react";
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -29,7 +29,9 @@ export function DashboardPage() {
         title="Dashboard"
         subtitle={new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
       >
-        <Button variant="outline" size="sm" onClick={() => refetch()}>↻ Refresh</Button>
+        <Button variant="outline" size="sm" onClick={() => refetch()}>
+          <><RotateCcw size={16} style={{ marginRight: 6 }} />Refresh</>
+        </Button>
       </PageHeader>
 
       {/* Ahintha TODO: Low stock alert */}
