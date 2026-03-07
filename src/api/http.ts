@@ -3,6 +3,7 @@ import type {
   ApiResponse,
   DashboardSummary,
 } from "../types";
+import type { AuthUser, LoginRequest } from "@/types/AuthUser";
 
 // Base URL comes from .env file
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
@@ -37,6 +38,13 @@ export const api = {
 
   // ── Auth (M4 - Pulindu) ──────────────────────────────────────────────────────────────
   // TODO: login
+  login: async (data: LoginRequest): Promise<AuthUser> => {
+
+    const res = await http.post<AuthUser>("/api/auth/login", data);
+
+    return res.data;
+
+  },
 
   // ── Dashboard ──────────────────────────────────────────────────────────────
   getDashboard: async (): Promise<DashboardSummary> => {
