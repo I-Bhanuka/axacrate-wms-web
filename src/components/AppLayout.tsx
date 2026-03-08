@@ -4,7 +4,9 @@ import { useAuthStore } from "../store/authStore";
 import { api } from "../api/http";
 import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose } from "lucide-react";
 import logo from "../assets/logo.png";
+import { LiveFeed } from "./LiveFeed";
 
+{/* The Navigation Items */ }
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/> },
   { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/> },
@@ -21,7 +23,11 @@ export function AppLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Page title management
+
+  {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
+  const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
+
+  {/* Page title management */}
   const location = useLocation();
 
   const currentNav = NAV_ITEMS.find(items => 
@@ -30,18 +36,17 @@ export function AppLayout() {
 
   const pageTitle = currentNav?.label || "";
 
+  {/* --- Helper methods --- */}
 
-  // ── Ahintha TODO: Movement polling ───────────────────────────────────────────────────────
-
+  {/* Helper method to handle logout, which calls the logout function from the auth store and navigates the user to the login page */}
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
 
   return (
-    <div className="flex min-h-screen w-screen overflow-x-hidden bg-background text-foreground">
+    <div className="flex h-screen w-screen overflow-x-hidden bg-background text-foreground">
 
       {/* Mobile overlay */}
       {/* When screen >= 1024px,  hide this element */}
@@ -119,7 +124,7 @@ export function AppLayout() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col min-h-screen lg:ml-[220px] w-full lg:w-[calc(100vw-220px)]">
+      <main className="flex-1 flex flex-col lg:ml-[220px] w-full lg:w-[calc(100vw-220px)]">
 
         {/* Header */}
         <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10 gap-3">
@@ -155,7 +160,7 @@ export function AppLayout() {
         </header>
 
         {/* Page content — each page renders here */}
-        <div className="flex-1 p-5">
+        <div className="flex-1 overflow-y-auto p-5">
 
           {/*  Outlet is where child routes render. */}
           <Outlet />
@@ -163,7 +168,8 @@ export function AppLayout() {
         </div>
       </main>
 
-      {/* Ahintha TODO: Movement toasts — bottom right */}
+      {/* Live feed sidebar */}
+      <LiveFeed user={user} />
 
     </div>
   );
