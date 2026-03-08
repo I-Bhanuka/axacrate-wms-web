@@ -66,7 +66,7 @@ export function DashboardPage() {
             label="Total Items"
             value={fmtNum(data?.totalItems)}
             icon={<Package size={20} />}
-            accentColor="#4f8ef7"
+            accentColor="#576A8F"
             subtitle="unique SKUs"
           />
 
@@ -74,7 +74,7 @@ export function DashboardPage() {
             label="Total Quantity"
             value={fmtNum(data?.totalQuantity)}
             icon={<Hash size={20} />}
-            accentColor="#7c5cfc"
+            accentColor="#B7BDF7"
             subtitle="units tracked"
           />
 
@@ -90,7 +90,7 @@ export function DashboardPage() {
             label="Active Zones"
             value={data?.activeZones ?? pieData.length}
             icon={<Warehouse size={20} />}
-            accentColor="#10b981"
+            accentColor="#FFF8DE"
             subtitle="operational"
           />
         </>

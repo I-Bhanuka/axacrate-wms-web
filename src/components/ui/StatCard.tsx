@@ -35,7 +35,7 @@ export function StatCard({
       />
       
       {icon && (
-        <div className="absolute right-4 top-4 text-2xl opacity-25">
+        <div className="absolute right-4 top-4 text-2xl opacity-25 text-[#576A8F]">
           {icon}
         </div>
       )}
