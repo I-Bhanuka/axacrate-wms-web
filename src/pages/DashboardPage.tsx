@@ -14,6 +14,7 @@ import { Skeleton } from "../components/ui/skeleton";
 import { Package, Hash, AlertTriangle, Warehouse, RotateCcw } from "lucide-react";
 import { SectionHeader } from "../components/dashboardComponents/SectionHeader";
 import { MovementTimeline } from "../components/dashboardComponents/MovementTimeline";
+import { ZoneOccupationCard } from "../components/dashboardComponents/ZoneOccupationCard";
 
 
 
@@ -31,6 +32,19 @@ export function DashboardPage() {
     queryFn:  () => api.getRecentMovements(12),
     refetchInterval: 3_000,
   });
+
+  {/* Zone Occupation data */}
+  const { data: zones = [] } = useQuery({
+    queryKey: QUERY_KEYS.zones.all,
+    queryFn:  api.getZones,
+    refetchInterval: 10_000,
+  });
+
+  {/* Calculate overall warehouse utilization for the zone occupation section */}
+  const pct  = (a: number, b: number) => b > 0 ? Math.round((a / b) * 100) : 0;
+  const totalCapacity = zones.reduce((s, z) => s + (z.capacity ?? 0), 0);
+  const totalItems    = zones.reduce((s, z) => s + (z.currentItemCount ?? 0), 0);
+  const overallUtil   = pct(totalItems, totalCapacity);
 
   const pieData = Object.entries(data?.itemsByZone ?? {}).map(([name, value]) => ({ name, value }));
 
@@ -98,19 +112,41 @@ export function DashboardPage() {
       </div>
 
 
-      {/* Aatif TODO: Zone Charts*/}
-
-
       {/* ── MOVEMENT TIMELINE ────────────────────────────────────── */}
       <div style={{
         background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
         borderRadius: 10, overflow: "hidden",
+        marginTop: 20,
       }}>
         <SectionHeader label="MOVEMENT TIMELINE" sub="Last 12 events" />
         <MovementTimeline movements={movements} />
       </div>
 
+      {/* ── Bottom: Zone Ocuupation cards ───────────────────────────────── */}
+      <div className="mt-[20px] overflow-hidden rounded-[10px] border border-white/10 bg-white/[0.02]">
+        
+        <SectionHeader
+          label="ZONE OCCUPATION"
+          sub={`${overallUtil}% overall utilization`}
+        />
+
+        <div className="grid gap-[10px] p-[16px] [grid-template-columns:repeat(auto-fill,minmax(160px,1fr))]">
+          
+          {zones.length === 0 ? (
+            <div className="col-[1/-1] p-[20px] text-center text-[11px] text-gray-700">
+              No zones found
+            </div>
+          ) : (
+            zones.map((z) => <ZoneOccupationCard key={z.id} zone={z} />)
+          )}
+
+        </div>
+      </div>
+
       {/* Sheshan TODO: Recent Items Table */}
+      {/* Aatif TODO: Zone Charts*/}
+
+      
       
     </>
   );

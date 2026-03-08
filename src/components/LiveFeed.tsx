@@ -110,7 +110,7 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
         <>
             {/* LIVE FEED */}
             {/* aside is used for side panels */}
-            <aside className="w-[260px] flex-shrink-0 border-l border-orange-500/50 bg-[#090c16] flex flex-col h-screen">
+            <aside className="w-[260px] flex-shrink-0 border-l bg-gray-1000 flex flex-col h-screen">
 
                 {/* Header */}
                 <div className="px-4 py-3 flex items-center justify-between">
