@@ -2,6 +2,8 @@ import axios from "axios";
 import type {
   ApiResponse,
   DashboardSummary,
+  InventoryItem,
+  InventoryItemCreateRequest,
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/AuthUser";
 
@@ -54,6 +56,11 @@ export const api = {
 
   // ── Inventory (M2 - Sheshan) ────────────────────────────────────────────────────────
   // TODO: getItems with filters, getItem by id/sku, create/update/delete item, getLowStock
+
+  createItem: async (data: InventoryItemCreateRequest): Promise<InventoryItem> => {
+    const res = await http.post<ApiResponse<InventoryItem>>("/api/inventory/create", data);
+    return res.data.data;
+  },
   
 
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
