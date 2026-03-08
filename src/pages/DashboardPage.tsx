@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// DASHBOARD PAGE — Assigned to: Member 1, 2, 3, 6 - Bhanuka, Sheshan, Aatif, Ahintha
+// DASHBOARD PAGE — Assigned to: Member 1 - Bhanuka
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +12,10 @@ import { StatCard } from "../components/ui/StatCard";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
 import { Package, Hash, AlertTriangle, Warehouse, RotateCcw } from "lucide-react";
+import { SectionHeader } from "../components/dashboardComponents/SectionHeader";
+import { MovementTimeline } from "../components/dashboardComponents/MovementTimeline";
+
+
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -19,6 +23,13 @@ export function DashboardPage() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.dashboard,
     queryFn:  api.getDashboard,
+  });
+
+  {/* Movement timeline data */}
+  const { data: movements = [] } = useQuery({
+    queryKey: ["movements-recent"],
+    queryFn:  () => api.getRecentMovements(12),
+    refetchInterval: 3_000,
   });
 
   const pieData = Object.entries(data?.itemsByZone ?? {}).map(([name, value]) => ({ name, value }));
@@ -89,10 +100,18 @@ export function DashboardPage() {
 
       {/* Aatif TODO: Zone Charts*/}
 
-      {/* Ahintha TODO: Recent Movements Table */}
+
+      {/* ── MOVEMENT TIMELINE ────────────────────────────────────── */}
+      <div style={{
+        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 10, overflow: "hidden",
+      }}>
+        <SectionHeader label="MOVEMENT TIMELINE" sub="Last 12 events" />
+        <MovementTimeline movements={movements} />
+      </div>
 
       {/* Sheshan TODO: Recent Items Table */}
-
+      
     </>
   );
 }
