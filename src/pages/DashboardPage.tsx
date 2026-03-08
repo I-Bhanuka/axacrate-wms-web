@@ -122,6 +122,15 @@ export function DashboardPage() {
         <MovementTimeline movements={movements} />
       </div>
 
+      {/* ── Alerts ────────────────────────────────────── */}
+      <div style={{
+        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 10, overflow: "hidden",
+        marginTop: 20,
+      }}>
+        <SectionHeader label="ALERTS" sub="Lastest Alerts" />
+      </div>
+
       {/* ── Bottom: Zone Ocuupation cards ───────────────────────────────── */}
       <div className="mt-[20px] overflow-hidden rounded-[10px] border border-white/10 bg-white/[0.02]">
         
