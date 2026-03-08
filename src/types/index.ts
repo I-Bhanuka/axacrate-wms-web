@@ -49,6 +49,29 @@ export interface FeedEntry {
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: InventoryItem, InventoryItemCreateRequest, InventoryItemUpdateRequest, PageResponse<T>, InventoryFilters
 
+// Single inventory item (used in View Item page & Inventory list)
+export interface InventoryItem {
+  id: string;
+  sku: string;
+  name: string;
+  quantity: number;
+  currentZoneName: string;
+  currentZoneId: string;
+  rfidTagUid: string | null;
+  rfidTagStatus: string | null;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+
+export interface InventoryItemCreateRequest {
+  sku: string;
+  name: string;
+  quantity: number;
+  rfidTag: string;
+  zoneName: string;
+}
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RFID  (M1 - Bhanuka)
