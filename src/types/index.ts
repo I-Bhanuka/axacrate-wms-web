@@ -21,6 +21,17 @@ export interface DashboardSummary {
   // recentItems: InventoryItem[]; // Add later when have recentItems
 }
 
+// For the Life Feed component on the dashboard
+export interface FeedEntry {
+  id: string;
+  itemName: string;
+  fromZone: string | null;
+  toZone: string;
+  date: string;
+  time: string;
+  isNew: boolean;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
