@@ -36,7 +36,25 @@ export interface FeedEntry {
 // AUTH  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: loginRequest, AuthUser
+export interface LoginRequest {
 
+  username: string;
+
+  password: string;
+
+}
+
+
+
+export interface AuthUser {
+
+  token: string;
+
+  username: string;
+
+  role: string;
+
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
