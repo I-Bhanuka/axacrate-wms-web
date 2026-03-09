@@ -82,7 +82,17 @@ export interface InventoryItemCreateRequest {
 // ─────────────────────────────────────────────────────────────────────────────
 // MOVEMENT LOG  (M6 - Ahintha)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: MovementLog
+export interface MovementLog {
+  id: string;
+  fromZoneName: string | null;
+  toZoneName: string | null;
+  eventType: string;
+  occurredAt: string;
+  hardwareType: string | null;
+  synced: boolean;
+  itemSku: string | null;
+  itemName: string | null;
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────
