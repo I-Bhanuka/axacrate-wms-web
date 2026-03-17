@@ -22,7 +22,7 @@ const COLUMNS = [
 ];
 
 
-export function MovementsPage() {
+export default function MovementsPage() {
   const [limit, setLimit] = useState(50);
 
 
