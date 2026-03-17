@@ -1,113 +1,85 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // MOVEMENTS PAGE — Assigned to: Member 6 - Ahintha
-import { useEffect, useState } from "react";
-import { api } from "@/api/http";
-import type { MovementLog } from "@/types";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../api/http";
+import { QUERY_KEYS } from "../lib/queryClient";
+import { fmtDate, fmtTime } from "../lib/utils";
+import { PageHeader } from "../components/ui/PageHeader";
+import { ZoneBadge } from "../components/ui/ZoneBadge";
+import { DataTable } from "../components/ui/DataTable";
+import { Button } from "../components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import type { MovementLog } from "../types";
 
+
+const COLUMNS = [
+  { key: "item",      label: "Item"       },
+  { key: "sku",       label: "SKU"        },
+  { key: "from",      label: "From"       },
+  { key: "to",        label: "To"         },
+  { key: "eventType", label: "Event"      },
+  { key: "time",      label: "Time"       },
+];
 export default function MovementsPage() {
-  const [movements, setMovements] = useState<MovementLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(50);
 
-  useEffect(() => {
-    loadMovements(limit);
-  }, [limit]);
 
-  const loadMovements = async (selectedLimit: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await api.getMovements(selectedLimit);
-      setMovements(data);
-    } catch (err) {
-      console.error("Failed to load movement logs:", err);
-      setError("Failed to load movement logs.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: movements = [], isLoading, refetch } = useQuery({
+    queryKey: QUERY_KEYS.movements.recent(limit),
+    queryFn:  () => api.getMovements(limit),
+  });
 
-  const formatDateTime = (value: string) => {
-    try {
-      return new Date(value).toLocaleString();
-    } catch {
-      return value;
-    }
-  };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Movement Logs</h1>
-          <p className="text-sm text-gray-600">
-            View recent RFID inventory movements across warehouse zones.
-          </p>
-        </div>
+    <>
+      <PageHeader title="Movement Log" subtitle={`${movements.length} movements`}>
+        <Select value={String(limit)} onValueChange={v => setLimit(Number(v))}>
+          <SelectTrigger className="w-24">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="20">Last 20</SelectItem>
+            <SelectItem value="50">Last 50</SelectItem>
+            <SelectItem value="100">Last 100</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="sm" onClick={() => refetch()}>↻ Refresh</Button>
+        {/* TODO M6: Add export CSV button here */}
+      </PageHeader>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="limit" className="text-sm font-medium text-gray-700">
-            Show
-          </label>
-          <select
-            id="limit"
-            value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-        </div>
-      </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        {loading ? (
-          <div className="p-6 text-sm text-gray-600">Loading movement logs...</div>
-        ) : error ? (
-          <div className="p-6 text-sm text-red-600">{error}</div>
-        ) : movements.length === 0 ? (
-          <div className="p-6 text-sm text-gray-600">No movement logs found.</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">Item</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">SKU</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">From Zone</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">To Zone</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">Event Type</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">Hardware</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">Synced</th>
-                  <th className="border-b px-4 py-3 text-left font-semibold text-gray-700">Occurred At</th>
-                </tr>
-              </thead>
-              <tbody>
-                {movements.map((movement) => (
-                  <tr key={movement.id} className="hover:bg-gray-50">
-                    <td className="border-b px-4 py-3">{movement.itemName ?? "-"}</td>
-                    <td className="border-b px-4 py-3">{movement.itemSku ?? "-"}</td>
-                    <td className="border-b px-4 py-3">{movement.fromZoneName ?? "-"}</td>
-                    <td className="border-b px-4 py-3">{movement.toZoneName ?? "-"}</td>
-                    <td className="border-b px-4 py-3">{movement.eventType}</td>
-                    <td className="border-b px-4 py-3">{movement.hardwareType ?? "-"}</td>
-                    <td className="border-b px-4 py-3">
-                      {movement.synced ? "Yes" : "No"}
-                    </td>
-                    <td className="border-b px-4 py-3">
-                      {formatDateTime(movement.occurredAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <DataTable<MovementLog>
+          columns={COLUMNS}
+          data={movements}
+          loading={isLoading}
+          keyExtractor={m => m.id}
+          emptyIcon="📡"
+          emptyTitle="No movements yet"
+          emptySubtitle="Movements appear as items are scanned by RFID readers"
+          renderRow={(m) => (
+            <>
+              <td className="px-4 py-3 font-semibold text-sm">{m.itemName ?? "—"}</td>
+              <td className="px-4 py-3 font-mono text-[11px] text-blue-400">{m.itemSku ?? "—"}</td>
+              <td className="px-4 py-3">
+                {m.fromZoneName
+                  ? <ZoneBadge zone={m.fromZoneName} />
+                  : <span className="text-muted-foreground text-xs">—</span>
+                }
+              </td>
+              <td className="px-4 py-3"><ZoneBadge zone={m.toZoneName} /></td>
+              <td className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                {m.eventType ?? "MOVEMENT"}
+              </td>
+              <td className="px-4 py-3">
+                <div className="text-sm">{fmtTime(m.occurredAt)}</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">{fmtDate(m.occurredAt)}</div>
+              </td>
+            </>
+          )}
+        />
       </div>
-    </div>
+    </>
   );
 }
