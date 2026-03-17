@@ -76,7 +76,7 @@ export function AppLayout() {
           </div>
           <div>
             <div className="font-mono font-bold text-sm leading-tight">AxaCrate</div>
-            <div className="text-[11px] text-muted-foreground font-light">Warehouse Platform</div>
+            <div className="text-[11px]  text-orange-500 font-light">Warehouse Platform</div>
           </div>
         </div>
 
@@ -93,7 +93,7 @@ export function AppLayout() {
               className={({ isActive }) => `
                 flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all
                 ${isActive
-                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                  ? "bg-orange-500/10 text-orange-400 border border-orange-500/20"
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-transparent"
                 }
               `}
@@ -109,7 +109,7 @@ export function AppLayout() {
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2.5 flex-wrap">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             <span className="text-foreground font-medium truncate">{user?.username}</span>
-            <span className="ml-auto text-[10px] bg-muted border border-border px-1.5 py-0.5 rounded">
+            <span className="ml-auto text-orange-200 text-[10px] bg-muted border border-border px-1.5 py-0.5 rounded">
               {user?.role}
             </span>
           </div>
@@ -153,7 +153,7 @@ export function AppLayout() {
               <><Plus size={16} style={{ marginRight: 6 }} />New Item</>
             </NavLink>
 
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-xs font-bold">
               {initials}
             </div>
           </div>

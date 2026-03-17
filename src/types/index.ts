@@ -41,8 +41,21 @@ export interface FeedEntry {
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: Zone, ZoneCreateRequest, ZoneUpdateRequest
-
+// TODO: ZoneCreateRequest, ZoneUpdateRequest
+// Represents a zone as returned by the backend
+export interface Zone {
+  id: string;
+  name: string;
+  zoneType: string;
+  capacity: number;
+  currentItemCount: number;
+  warehouseName: string;
+  status: "ACTIVE" | "INACTIVE";
+  hasHardware: boolean;
+  hardwareName: string | null;
+  hardwareType: string | null;
+  hardwareStatus: string | null;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INVENTORY  (M2)
