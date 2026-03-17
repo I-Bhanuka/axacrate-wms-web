@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { api } from "../api/http";
 import type { RfidScanResponse } from "../types";
-import { Search, RefreshCcw } from 'lucide-react';
+import { Search, RefreshCcw, SearchCheck, SearchAlert } from 'lucide-react';
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
 
@@ -46,7 +46,7 @@ export function CreateItemPage() {
                     <div className="px-4 py-3 border-b border-border font-bold text-sm">RFID Tag Scan</div>
                     <div className="p-4">
                         <div className={`rounded-xl p-6 text-center mb-4 transition-colors ${scanState === "scanning" ? "bg-blue-500/8 border border-blue-500/20" :
-                                "bg-muted/30 border border-border"
+                            "bg-muted/30 border border-border"
                             }`}>
                             {scanState === "idle" && (<>
                                 <div className="text-3xl mb-2 flex items-center justify-center text-3xl mb-2"><Search /></div>
@@ -59,6 +59,20 @@ export function CreateItemPage() {
                                 <div className="text-sm text-muted-foreground">Place the tag on the WRITER reader now</div>
                                 <div className="mt-3 flex justify-center">
                                     <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            </>)}
+                            {scanState === "found" && (<>
+                                <div className="text-3xl mb-2"><SearchCheck /></div>
+                                <div className="font-semibold text-green-400 mb-1">Tag Detected!</div>
+                                <div className="font-mono text-sm bg-muted/50 rounded px-3 py-1 inline-block mt-1">{tagData?.tagUid}</div>
+                            </>)}
+                            {scanState === "warning" && (<>
+                                <div className="text-3xl mb-2"><SearchAlert /></div>
+                                <div className="font-semibold text-yellow-400 mb-1">Tag Already Assigned</div>
+                                <div className="text-sm mb-3">Linked to: <strong>{tagData?.itemName}</strong> ({tagData?.sku})</div>
+                                <div className="flex gap-2 justify-center">
+                                    <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${tagData?.inventoryItemId}`)}>View Item</Button>
+                                    <Button size="sm" variant="outline" onClick={() => setScanState("idle")}>Scan Different</Button>
                                 </div>
                             </>)}
                         </div>
