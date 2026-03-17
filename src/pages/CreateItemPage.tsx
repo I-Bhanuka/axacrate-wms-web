@@ -1,5 +1,19 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// CREATE ITEM PAGE — Assigned to: Member 2 - Sheshan
-//
-// TODO M2: Build the Create Item page UI and integrate with backend API to create new inventory items.
-// ─────────────────────────────────────────────────────────────────────────────
+import { useNavigate } from "react-router-dom";
+import { PageHeader } from "../components/ui/PageHeader";
+import { Button } from "../components/ui/button";
+
+export function CreateItemPage() {
+    const navigate = useNavigate();
+
+    return (
+        <>
+            <PageHeader title="Create Item" subtitle="Register a new inventory item with RFID tag">
+                <Button variant="outline" onClick={() => navigate("/inventory")}>← Back</Button>
+            </PageHeader>
+
+            <div className="max-w-xl">
+                {/* panels will go here */}
+            </div>
+        </>
+    );
+}
