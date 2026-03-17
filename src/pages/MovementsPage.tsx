@@ -1,32 +1,22 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // MOVEMENTS PAGE — Assigned to: Member 6 - Ahintha
-import { useEffect, useState } from "react";
-import { api } from "@/api/http";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "../lib/queryClient";
+import { api } from "../api/http";
 import type { MovementLog } from "@/types";
 
 export default function MovementsPage() {
-  const [movements, setMovements] = useState<MovementLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [limit, setLimit] = useState(20);
 
-  useEffect(() => {
-    loadMovements(limit);
-  }, [limit]);
-
-  const loadMovements = async (selectedLimit: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await api.getMovements(selectedLimit);
-      setMovements(data);
-    } catch (err) {
-      console.error("Failed to load movement logs:", err);
-      setError("Failed to load movement logs.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: movements = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: QUERY_KEYS.movements.recent(limit),
+    queryFn: () => api.getMovements(limit),
+  });
 
   const formatDateTime = (value: string) => {
     try {
@@ -65,10 +55,10 @@ export default function MovementsPage() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        {loading ? (
+        {isLoading ? (
           <div className="p-6 text-sm text-gray-600">Loading movement logs...</div>
-        ) : error ? (
-          <div className="p-6 text-sm text-red-600">{error}</div>
+        ) : isError ? (
+          <div className="p-6 text-sm text-red-600">Failed to load movement logs.</div>
         ) : movements.length === 0 ? (
           <div className="p-6 text-sm text-gray-600">No movement logs found.</div>
         ) : (
