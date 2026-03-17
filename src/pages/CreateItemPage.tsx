@@ -4,6 +4,7 @@ import { Button } from "../components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { api } from "../api/http";
 import type { RfidScanResponse } from "../types";
+import { Search, RefreshCcw } from 'lucide-react';
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
 
@@ -48,12 +49,12 @@ export function CreateItemPage() {
                                 "bg-muted/30 border border-border"
                             }`}>
                             {scanState === "idle" && (<>
-                                <div className="text-3xl mb-2">📡</div>
+                                <div className="text-3xl mb-2 flex items-center justify-center text-3xl mb-2"><Search /></div>
                                 <div className="font-semibold mb-1">Ready to Scan</div>
                                 <div className="text-sm text-muted-foreground">Place RFID tag on the WRITER reader, then click Scan Tag</div>
                             </>)}
                             {scanState === "scanning" && (<>
-                                <div className="text-3xl mb-2">🔄</div>
+                                <div className="text-3xl mb-2 text-3xl mb-2 flex items-center justify-center"><RefreshCcw /></div>
                                 <div className="font-semibold mb-1">Waiting for ESP32…</div>
                                 <div className="text-sm text-muted-foreground">Place the tag on the WRITER reader now</div>
                                 <div className="mt-3 flex justify-center">
@@ -63,7 +64,7 @@ export function CreateItemPage() {
                         </div>
 
                         <Button className="w-full" onClick={startScan} disabled={scanState === "scanning"}>
-                            {scanState === "scanning" ? "Waiting for scan…" : "📡 Scan Tag"}
+                            {scanState === "scanning" ? "Waiting for scan…" : <> <Search /> Scan Tag</>}
                         </Button>
                     </div>
                 </div>
