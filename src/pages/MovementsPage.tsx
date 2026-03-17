@@ -6,6 +6,15 @@ import { QUERY_KEYS } from "../lib/queryClient";
 import { api } from "../api/http";
 import type { MovementLog } from "@/types";
 
+
+const COLUMNS = [
+  { key: "item",      label: "Item"       },
+  { key: "sku",       label: "SKU"        },
+  { key: "from",      label: "From"       },
+  { key: "to",        label: "To"         },
+  { key: "eventType", label: "Event"      },
+  { key: "time",      label: "Time"       },
+];
 export default function MovementsPage() {
   const [limit, setLimit] = useState(20);
 
@@ -98,6 +107,6 @@ export default function MovementsPage() {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
