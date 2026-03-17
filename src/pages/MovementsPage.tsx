@@ -107,6 +107,6 @@ export default function MovementsPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
