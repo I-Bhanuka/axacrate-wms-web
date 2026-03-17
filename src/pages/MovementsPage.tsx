@@ -7,6 +7,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { ZoneBadge } from "../components/ui/ZoneBadge";
 import { DataTable } from "../components/ui/DataTable";
 import { Button } from "../components/ui/button";
+import { RadioTower } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import type { MovementLog } from "../types";
 
@@ -27,7 +28,7 @@ export function MovementsPage() {
 
   const { data: movements = [], isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.movements.recent(limit),
-    queryFn:  () => api.getRecentMovements(limit),
+    queryFn:  () => api.getMovements(limit),
   });
 
 
@@ -55,7 +56,7 @@ export function MovementsPage() {
           data={movements}
           loading={isLoading}
           keyExtractor={m => m.id}
-          emptyIcon="📡"
+          emptyIcon={<RadioTower size={28} className="text-muted-foreground" />}
           emptyTitle="No movements yet"
           emptySubtitle="Movements appear as items are scanned by RFID readers"
           renderRow={(m) => (
