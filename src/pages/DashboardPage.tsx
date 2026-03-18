@@ -29,7 +29,7 @@ export function DashboardPage() {
   {/* Movement timeline data */}
   const { data: movements = [] } = useQuery({
     queryKey: ["movements-recent"],
-    queryFn:  () => api.getRecentMovements(12),
+    queryFn:  () => api.getMovements(12),
     refetchInterval: 3_000,
   });
 
