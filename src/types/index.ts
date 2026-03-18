@@ -41,8 +41,21 @@ export interface FeedEntry {
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: Zone, ZoneCreateRequest, ZoneUpdateRequest
-
+// TODO: ZoneCreateRequest, ZoneUpdateRequest
+// Represents a zone as returned by the backend
+export interface Zone {
+  id: string;
+  name: string;
+  zoneType: string;
+  capacity: number;
+  currentItemCount: number;
+  warehouseName: string;
+  status: "ACTIVE" | "INACTIVE";
+  hasHardware: boolean;
+  hardwareName: string | null;
+  hardwareType: string | null;
+  hardwareStatus: string | null;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INVENTORY  (M2)
@@ -77,6 +90,17 @@ export interface InventoryItemCreateRequest {
 // RFID  (M1 - Bhanuka)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: RfidScanResponse, RfidTagStatus
+export type RfidTagStatus = "UNASSIGNED" | "ASSIGNED" | "NEW_TAG";
+
+
+export interface RfidScanResponse {
+  tagUid: string;
+  status: RfidTagStatus;
+  currentZone: string | null;
+  itemName?: string;
+  sku?: string;
+  inventoryItemId?: string;
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -4,7 +4,12 @@ import type {
   DashboardSummary,
   InventoryItem,
   InventoryItemCreateRequest,
+<<<<<<< feature/movementPage
   MovementLog,
+=======
+  Zone,
+  RfidScanResponse,
+>>>>>>> develop
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/AuthUser";
 
@@ -67,9 +72,24 @@ export const api = {
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
   // TODO: getZones, getZone by id, create/update zone, getWarehouses for dropdown
 
+  // Getting all the zones from the database
+  getZones: async (): Promise<Zone[]> => {
+    const res = await http.get<ApiResponse<Zone[]>>("/api/zones");
+    return res.data.data;
+  },
+
+  // Getting a specific zone by its name
+  getZoneByName: async (name: string): Promise<Zone> => {
+    const res = await http.get<ApiResponse<Zone>>(`/api/zones/name/${name}`);
+    return res.data.data;
+  },
 
   // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
+    pollRfid: async (): Promise<RfidScanResponse | null> => {
+    const res = await http.get<ApiResponse<RfidScanResponse | null>>("/api/rfid/write-latest");
+    return res.data.data;
+  },
 
 
   // ── Movement Log (M6 - Ahintha) ─────────────────────────────────────────────────────
