@@ -4,12 +4,9 @@ import type {
   DashboardSummary,
   InventoryItem,
   InventoryItemCreateRequest,
-<<<<<<< feature/movementPage
   MovementLog,
-=======
   Zone,
   RfidScanResponse,
->>>>>>> develop
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/AuthUser";
 
