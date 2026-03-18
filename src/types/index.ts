@@ -37,7 +37,25 @@ export interface FeedEntry {
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: loginRequest, AuthUser
 
+export interface LoginRequest {
 
+  username: string;
+
+  password: string;
+
+}
+
+
+
+export interface AuthUser {
+
+  token: string;
+
+  username: string;
+
+  role: string;
+
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -102,7 +120,25 @@ export interface InventoryItemCreateRequest {
 // ALERTS  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: Alert
+export interface Alert {
+  id: string;
+  alertType: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  alertStatus: "PENDING" | "ACKNOWLEDGED" | "RESOLVED";
+  message: string | null;
+  zoneId: string | null;
+  zoneName: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+  resolvedByUsername: string | null;
+}
 
+export interface CreateAlertRequest {
+  alertType: string;
+  severity: string;
+  message: string;
+  zoneId?: string | null;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GEOFENCING  (M5 - Daniru)
