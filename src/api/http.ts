@@ -3,12 +3,14 @@ import type {
   ApiResponse,
   DashboardSummary,
   InventoryItem,
+  Alert,
+  CreateAlertRequest,
   InventoryItemCreateRequest,
   MovementLog,
   Zone,
   RfidScanResponse,
 } from "../types";
-import type { AuthUser, LoginRequest } from "@/types/AuthUser";
+import type { AuthUser, LoginRequest } from "@/types/index";
 
 // Base URL comes from .env file
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
@@ -102,7 +104,40 @@ export const api = {
   // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
   // TODO: getWarehouses for dropdown
   
+
+  // ── Alerts (M4 - Pulindu) ──────────────────────────────────────────────────────────────
+  getAlerts: async (status?: string): Promise<Alert[]> => {
+    const res = await http.get<ApiResponse<Alert[]>>("/api/alerts", { params: status ? { status } : {} });
+    return res.data.data;
+  },
+
+  getAlertsByZone: async (zoneId: string): Promise<Alert[]> => {
+    const res = await http.get<ApiResponse<Alert[]>>(`/api/zones/${zoneId}/alerts`);
+    return res.data.data;
+  },
+
+  getUnresolvedAlerts: async (): Promise<Alert[]> => {
+    const res = await http.get<ApiResponse<Alert[]>>("/api/alerts/unresolved");
+    return res.data.data;
+  },
+
+  acknowledgeAlert: async (id: string): Promise<Alert> => {
+    const res = await http.put<ApiResponse<Alert>>(`/api/alerts/${id}/acknowledge`);
+    return res.data.data;
+  },
+
+  resolveAlert: async (id: string): Promise<Alert> => {
+    const res = await http.put<ApiResponse<Alert>>(`/api/alerts/${id}/resolve`);
+    return res.data.data;
+  },
+
+  createAlert: async (data: CreateAlertRequest): Promise<Alert> => {
+    const res = await http.post<ApiResponse<Alert>>("/api/alerts", data);
+    return res.data.data;
+  },
 };
+
+
 
 // Extend window type for global token storage
 declare global {
