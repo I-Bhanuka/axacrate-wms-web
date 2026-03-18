@@ -8,6 +8,7 @@ import type {
   InventoryItemCreateRequest,
   MovementLog,
   Zone,
+  ZoneCreateRequest,
   RfidScanResponse,
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
@@ -83,6 +84,12 @@ export const api = {
     return res.data.data;
   },
 
+  // Create a new zone in the system
+  createZone: async (data: ZoneCreateRequest): Promise<Zone> => {
+    const res = await http.post<ApiResponse<Zone>>("/api/zones", data);
+    return res.data.data;
+  },
+  
   // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
     pollRfid: async (): Promise<RfidScanResponse | null> => {
