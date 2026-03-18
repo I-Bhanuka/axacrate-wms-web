@@ -85,6 +85,13 @@ export interface ZoneCreateRequest {
   status: string;
 }
 
+// Request payload for updating an existing zone (All fields when updating are optional)
+export interface ZoneUpdateRequest {
+  name?: string;
+  capacity?: number;
+  status?: string;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // INVENTORY  (M2)
 // ─────────────────────────────────────────────────────────────────────────────
