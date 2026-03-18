@@ -85,20 +85,36 @@ export const api = {
     return res.data.data;
   },
 
-  // Create a new zone in the system
+  // Creating a new zone in the database
   createZone: async (data: ZoneCreateRequest): Promise<Zone> => {
     const res = await http.post<ApiResponse<Zone>>("/api/zones", data);
     return res.data.data;
   },
 
-  // Update an existing zone using warehouse name and zone name as identifiers
+  // Updating an existing zone using the warehouse name and zone name as the identifiers
   updateZone: async (warehouseName: string, name: string, data: ZoneUpdateRequest): Promise<Zone> => {
     const res = await http.patch<ApiResponse<Zone>>(
       `/api/zones/warehouse/${warehouseName}/name/${name}`, data
     );
     return res.data.data;
   },
+
+  // Disabling a zone by it's warehouse name and zone name
+  disableZone: async (warehouseName: string, name: string): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}/disable`
+    );
+    return res.data.data;
+  },
   
+  // Enabling a zone by it's warehouse name and zone name
+  enableZone: async (warehouseName: string, name: string): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}/enable`
+    );
+    return res.data.data;
+  },
+
   // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
     pollRfid: async (): Promise<RfidScanResponse | null> => {
