@@ -4,8 +4,12 @@ import type {
   DashboardSummary,
   InventoryItem,
   InventoryItemCreateRequest,
+<<<<<<< feature/movementPage
+  MovementLog,
+=======
   Zone,
   RfidScanResponse,
+>>>>>>> develop
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/AuthUser";
 
@@ -89,7 +93,12 @@ export const api = {
 
 
   // ── Movement Log (M6 - Ahintha) ─────────────────────────────────────────────────────
-  // TODO: getMovements with pagination
+    getMovements: async (limit = 20): Promise<MovementLog[]> => {
+        const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/recent", {
+          params: { limit },
+        });
+        return res.data.data;
+      },
   
 
 
