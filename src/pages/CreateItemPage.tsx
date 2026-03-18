@@ -7,11 +7,15 @@ import type { RfidScanResponse } from "../types";
 import { Search, RefreshCcw, SearchCheck, SearchAlert } from 'lucide-react';
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "../lib/queryClient";
+import { getErrorMessage } from "../lib/utils";
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
 
 export function CreateItemPage() {
-    const navigate = useNavigate();
+    const navigate = useNavigate();  // This hook is used to programmatically navigate the user to different routes within the application.
+    const queryClient = useQueryClient(); // This is used to invalidate and refetch inventory data after creating a new item.
 
     const [scanState, setScanState] = useState<ScanState>("idle"); //This tracks the current state of  the RFID scanning process,(idle, scanning, found, warning)
     const [tagData, setTagData] = useState<RfidScanResponse | null>(null);  //This holds the data returned from the RFID scan, which includes details about the scanned tag and its status. 
@@ -40,22 +44,37 @@ export function CreateItemPage() {
                 // If the tag is already assigned to an item, we show a warning state. Otherwise, we show the found state and proceed with item creation.
             } catch { /* keep polling silently */ }
         }, 1500);
-
-        const validate = () => {
-            const e: Record<string, string> = {};
-            if (!tagData) e.tag = "Please scan a tag first";
-            if (!form.sku.trim()) e.sku = "SKU is required";
-            if (!form.name.trim()) e.name = "Name is required";
-            if (form.quantity === "" || Number(form.quantity) < 0) e.quantity = "Valid quantity required";
-            setErrors(e);
-            return Object.keys(e).length === 0;
-        }; // This function validates the form data before allowing the item to be created. It checks for the presence of a scanned tag.
-
-        const submit = () => {
-            if (!validate()) return;
-            // Here we would call the API to create the item, passing the form data and the scanned tag information.
-        };
     };
+
+    const validate = () => {
+        const e: Record<string, string> = {};
+        if (!tagData) e.tag = "Please scan a tag first";
+        if (!form.sku.trim()) e.sku = "SKU is required";
+        if (!form.name.trim()) e.name = "Name is required";
+        if (form.quantity === "" || Number(form.quantity) < 0) e.quantity = "Valid quantity required";
+        setErrors(e);
+        return Object.keys(e).length === 0;
+    }; // This function validates the form data before allowing the item to be created. It checks for the presence of a scanned tag.
+
+    const createMutation = useMutation({
+        mutationFn: () => api.createItem({
+            sku: form.sku,
+            name: form.name,
+            quantity: Number(form.quantity),
+            rfidTag: tagData!.tagUid,
+            zoneName: tagData!.currentZone ?? "",
+        }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.inventory.all });
+            navigate("/inventory");
+        },
+    }); // This sets up a mutation using React Query to handle the API call for creating a new inventory item. 
+
+    const submit = () => {
+        if (!validate()) return;
+        createMutation.mutate();
+    };
+
 
     return (
         <>
@@ -109,6 +128,11 @@ export function CreateItemPage() {
                             <div className="bg-card border border-border rounded-xl overflow-hidden">
                                 <div className="px-4 py-3 border-b border-border font-bold text-sm">Item Details</div>
                                 <div className="p-4 flex flex-col gap-4">
+                                    {createMutation.isError && (
+                                        <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm px-3 py-2 rounded-lg">
+                                            {getErrorMessage(createMutation.error)}
+                                        </div>
+                                    )}
 
                                     <div className="flex flex-col gap-1.5">
                                         <Label>RFID Tag UID</Label>
@@ -117,13 +141,13 @@ export function CreateItemPage() {
                                     <div className="flex flex-col gap-1.5">
                                         <Label>SKU *</Label>
                                         <Input placeholder="e.g. ITEM-2024-001" value={form.sku} onChange={set("sku")} />
-                                        {errors.sku      && <p className="text-destructive text-xs">{errors.sku}</p>}
+                                        {errors.sku && <p className="text-destructive text-xs">{errors.sku}</p>}
 
                                     </div>
                                     <div className="flex flex-col gap-1.5">
                                         <Label>Item Name *</Label>
                                         <Input placeholder="e.g. Industrial Bearing 6205" value={form.name} onChange={set("name")} />
-                                        {errors.name     && <p className="text-destructive text-xs">{errors.name}</p>}
+                                        {errors.name && <p className="text-destructive text-xs">{errors.name}</p>}
 
                                     </div>
                                     <div className="flex flex-col gap-1.5">
@@ -134,7 +158,9 @@ export function CreateItemPage() {
                                     </div>
                                     <div className="flex gap-2.5 flex-wrap">
                                         <Button variant="outline" onClick={() => navigate("/inventory")}>Cancel</Button>
-                                        <Button className="flex-1 min-w-36">Create Item</Button>
+                                        <Button className="flex-1 min-w-36" onClick={submit} disabled={createMutation.isPending}>
+                                            {createMutation.isPending ? "Creating…" : "Create Item"}
+                                        </Button>
 
                                     </div>
 
