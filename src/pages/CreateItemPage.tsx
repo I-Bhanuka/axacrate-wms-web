@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react";
 import { api } from "../api/http";
 import type { RfidScanResponse } from "../types";
 import { Search, RefreshCcw, SearchCheck, SearchAlert } from 'lucide-react';
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
 
