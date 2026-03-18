@@ -24,6 +24,7 @@ export function CreateItemPage() {
     const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
         setForm(f => ({ ...f, [field]: e.target.value }));   //This is a helper function to update the form state when the user types into the input fields. 
 
+    const [errors, setErrors] = useState<Record<string, string>>({}); //This state is intended to hold any validation errors for the form fields, allowing the UI to display error messages next to the relevant inputs.
 
     const startScan = () => {
         setScanState("scanning");
@@ -39,6 +40,21 @@ export function CreateItemPage() {
                 // If the tag is already assigned to an item, we show a warning state. Otherwise, we show the found state and proceed with item creation.
             } catch { /* keep polling silently */ }
         }, 1500);
+
+        const validate = () => {
+            const e: Record<string, string> = {};
+            if (!tagData) e.tag = "Please scan a tag first";
+            if (!form.sku.trim()) e.sku = "SKU is required";
+            if (!form.name.trim()) e.name = "Name is required";
+            if (form.quantity === "" || Number(form.quantity) < 0) e.quantity = "Valid quantity required";
+            setErrors(e);
+            return Object.keys(e).length === 0;
+        }; // This function validates the form data before allowing the item to be created. It checks for the presence of a scanned tag.
+
+        const submit = () => {
+            if (!validate()) return;
+            // Here we would call the API to create the item, passing the form data and the scanned tag information.
+        };
     };
 
     return (
@@ -86,6 +102,7 @@ export function CreateItemPage() {
 
                         <Button className="w-full" onClick={startScan} disabled={scanState === "scanning"}>
                             {scanState === "scanning" ? "Waiting for scan…" : <> <Search /> Scan Tag</>}
+                            {errors.tag && <p className="text-destructive text-xs mt-2">{errors.tag}</p>}
                         </Button>
 
                         {scanState === "found" && (
@@ -100,18 +117,25 @@ export function CreateItemPage() {
                                     <div className="flex flex-col gap-1.5">
                                         <Label>SKU *</Label>
                                         <Input placeholder="e.g. ITEM-2024-001" value={form.sku} onChange={set("sku")} />
+                                        {errors.sku      && <p className="text-destructive text-xs">{errors.sku}</p>}
+
                                     </div>
                                     <div className="flex flex-col gap-1.5">
                                         <Label>Item Name *</Label>
                                         <Input placeholder="e.g. Industrial Bearing 6205" value={form.name} onChange={set("name")} />
+                                        {errors.name     && <p className="text-destructive text-xs">{errors.name}</p>}
+
                                     </div>
                                     <div className="flex flex-col gap-1.5">
                                         <Label>Quantity *</Label>
                                         <Input type="number" min="0" placeholder="0" value={form.quantity} onChange={set("quantity")} />
+                                        {errors.quantity && <p className="text-destructive text-xs">{errors.quantity}</p>}
+
                                     </div>
                                     <div className="flex gap-2.5 flex-wrap">
                                         <Button variant="outline" onClick={() => navigate("/inventory")}>Cancel</Button>
                                         <Button className="flex-1 min-w-36">Create Item</Button>
+
                                     </div>
 
                                 </div>
