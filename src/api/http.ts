@@ -9,6 +9,7 @@ import type {
   MovementLog,
   Zone,
   ZoneCreateRequest,
+  ZoneUpdateRequest,
   RfidScanResponse,
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
@@ -70,7 +71,7 @@ export const api = {
   
 
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
-  // TODO: getZones, getZone by id, create/update zone, getWarehouses for dropdown
+  // TODO: getZone by id, getWarehouses for dropdown
 
   // Getting all the zones from the database
   getZones: async (): Promise<Zone[]> => {
@@ -87,6 +88,14 @@ export const api = {
   // Create a new zone in the system
   createZone: async (data: ZoneCreateRequest): Promise<Zone> => {
     const res = await http.post<ApiResponse<Zone>>("/api/zones", data);
+    return res.data.data;
+  },
+
+  // Update an existing zone using warehouse name and zone name as identifiers
+  updateZone: async (warehouseName: string, name: string, data: ZoneUpdateRequest): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}`, data
+    );
     return res.data.data;
   },
   
