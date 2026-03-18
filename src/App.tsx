@@ -8,6 +8,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { LoginPage }      from "./pages/LoginPage";
 import { DashboardPage }  from "./pages/DashboardPage";
 import { CreateItemPage } from "./pages/CreateItemPage";
+import { AlertsPage }     from "./pages/AlertsPage";
+
 
 // TODO: Add othrer pages and their routes here
 
@@ -26,6 +28,7 @@ export default function App() {
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard"          element={<DashboardPage />}  />
               <Route path="/createItem"      element={<CreateItemPage />} />
+              <Route path="/alerts"             element={<AlertsPage />}     />
             </Route>
           </Route>
 
