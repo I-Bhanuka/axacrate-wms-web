@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react";
 import { api } from "../api/http";
 import type { RfidScanResponse } from "../types";
 import { Search, RefreshCcw, SearchCheck, SearchAlert } from 'lucide-react';
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
 
@@ -17,6 +19,11 @@ export function CreateItemPage() {
 
     const stopPolling = () => { if (pollRef.current) clearInterval(pollRef.current); };
     useEffect(() => () => stopPolling(), []);
+
+    const [form, setForm] = useState({ sku: "", name: "", quantity: "" }); //This state holds the form data for creating a new inventory item, including SKU, name, and quantity.
+    const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+        setForm(f => ({ ...f, [field]: e.target.value }));   //This is a helper function to update the form state when the user types into the input fields. 
+
 
     const startScan = () => {
         setScanState("scanning");
@@ -80,6 +87,36 @@ export function CreateItemPage() {
                         <Button className="w-full" onClick={startScan} disabled={scanState === "scanning"}>
                             {scanState === "scanning" ? "Waiting for scan…" : <> <Search /> Scan Tag</>}
                         </Button>
+
+                        {scanState === "found" && (
+                            <div className="bg-card border border-border rounded-xl overflow-hidden">
+                                <div className="px-4 py-3 border-b border-border font-bold text-sm">Item Details</div>
+                                <div className="p-4 flex flex-col gap-4">
+
+                                    <div className="flex flex-col gap-1.5">
+                                        <Label>RFID Tag UID</Label>
+                                        <Input value={tagData?.tagUid ?? ""} disabled />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <Label>SKU *</Label>
+                                        <Input placeholder="e.g. ITEM-2024-001" value={form.sku} onChange={set("sku")} />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <Label>Item Name *</Label>
+                                        <Input placeholder="e.g. Industrial Bearing 6205" value={form.name} onChange={set("name")} />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <Label>Quantity *</Label>
+                                        <Input type="number" min="0" placeholder="0" value={form.quantity} onChange={set("quantity")} />
+                                    </div>
+                                    <div className="flex gap-2.5 flex-wrap">
+                                        <Button variant="outline" onClick={() => navigate("/inventory")}>Cancel</Button>
+                                        <Button className="flex-1 min-w-36">Create Item</Button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
