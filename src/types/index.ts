@@ -90,6 +90,17 @@ export interface InventoryItemCreateRequest {
 // RFID  (M1 - Bhanuka)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: RfidScanResponse, RfidTagStatus
+export type RfidTagStatus = "UNASSIGNED" | "ASSIGNED" | "NEW_TAG";
+
+
+export interface RfidScanResponse {
+  tagUid: string;
+  status: RfidTagStatus;
+  currentZone: string | null;
+  itemName?: string;
+  sku?: string;
+  inventoryItemId?: string;
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────
