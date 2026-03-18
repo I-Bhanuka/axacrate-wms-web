@@ -59,7 +59,8 @@ export interface AuthUser {
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: ZoneCreateRequest, ZoneUpdateRequest
+// TODO: ZoneUpdateRequest
+
 // Represents a zone as returned by the backend
 export interface Zone {
   id: string;
@@ -73,6 +74,15 @@ export interface Zone {
   hardwareName: string | null;
   hardwareType: string | null;
   hardwareStatus: string | null;
+}
+
+// Request payload for creating a new zone
+export interface ZoneCreateRequest {
+  name: string;
+  zoneType: string;
+  warehouseName: string;
+  capacity: number;
+  status: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
