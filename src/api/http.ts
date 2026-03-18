@@ -4,7 +4,8 @@ import type {
   DashboardSummary,
   InventoryItem,
   InventoryItemCreateRequest,
-  Zone
+  Zone,
+  RfidScanResponse,
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/AuthUser";
 
@@ -81,6 +82,10 @@ export const api = {
 
   // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
+    pollRfid: async (): Promise<RfidScanResponse | null> => {
+    const res = await http.get<ApiResponse<RfidScanResponse | null>>("/api/rfid/write-latest");
+    return res.data.data;
+  },
 
 
   // ── Movement Log (M6 - Ahintha) ─────────────────────────────────────────────────────
