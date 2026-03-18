@@ -98,6 +98,14 @@ export const api = {
     );
     return res.data.data;
   },
+
+  // Disable a zone by warehouse name and zone name
+  disableZone: async (warehouseName: string, name: string): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}/disable`
+    );
+    return res.data.data;
+  },
   
   // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
