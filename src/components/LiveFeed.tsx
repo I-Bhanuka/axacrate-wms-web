@@ -22,7 +22,7 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
         {/* poll is an async function that fetches the recent movements from the API and updates the feed */}
         const poll = async () => {
         try {
-            const movements: MovementLog[] = await api.getRecentMovements(20);
+            const movements: MovementLog[] = await api.getMovements(20);
             if (!movements?.length) return;
 
 
@@ -36,12 +36,13 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
             setFeed(movements.slice(0, 10).map(m => ({
                 id: m.id,
                 itemName: m.itemName ?? "Unknown",
-                fromZone: m.fromZoneName,
-                toZone:   m.toZoneName,
+                fromZone: m.fromZoneName ?? "—",
+                toZone: m.toZoneName ?? "—",
                 time:     new Date(m.occurredAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
                 date:     new Date(m.occurredAt).toLocaleDateString("en-US"),
                 isNew:    false, 
             })));
+            
             seeded.current = true; {/* Mark the feed as seeded */}
             return;
             }
@@ -56,8 +57,8 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
                 const entry: FeedEntry = {
                 id: m.id,
                 itemName: m.itemName ?? "Unknown",
-                fromZone: m.fromZoneName,
-                toZone:   m.toZoneName,
+                fromZone: m.fromZoneName ?? "—",
+                toZone:   m.toZoneName ?? "—",
                 time:     new Date(m.occurredAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
                 date:     new Date(m.occurredAt).toLocaleDateString("en-US"),
                 isNew:    true,
