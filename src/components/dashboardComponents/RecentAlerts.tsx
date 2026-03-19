@@ -188,7 +188,21 @@ export function RecentAlerts() {
           );
         })}
       </div>
-    
+
+
+      {/* Footer: total count + link to full alerts page */}
+      <div
+        className="px-4 py-2.5 border-t border-white/[0.04] flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition-colors"
+        onClick={() => navigate("/alerts")}
+      >
+        <span className="text-[11px] text-white/25">
+          {(allAlerts as AlertItemDashboard[]).length} total alerts
+        </span>
+        <span className="text-[11px] text-orange-400/70 hover:text-orange-400 transition-colors font-medium">
+          View all →
+        </span>
+      </div>
+
     </div>
   );
 }
