@@ -88,6 +88,12 @@ export const api = {
   },
 
 
+    deleteItem: async (sku: string): Promise<void> => {
+    await http.delete(`/api/inventory/${sku}`);
+  },
+
+
+
 
   
 
