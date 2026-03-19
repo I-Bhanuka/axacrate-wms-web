@@ -28,6 +28,7 @@ export function InventoryPage() {
     const [search, setSearch] = useState("");
     const [filters, setFilters] = useState({ zoneId: "", minQty: "", maxQty: "" });
     const [deleteTarget, setDeleteTarget] = useState<InventoryItem | null>(null);
+    
 
     const dSearch = useDebounce(search, 300);
 
@@ -64,14 +65,24 @@ export function InventoryPage() {
         setPage(0);
     };
 
+    const items = data?.content ?? [];
+    const totalPages = data?.totalPages ?? 0;
+    const totalElements = data?.totalElements ?? 0;
+
+    const pageNumbers = useMemo(() => {
+        const arr = [];
+        const start = Math.max(0, page - 2);
+        const end = Math.min(totalPages - 1, page + 2);
+        for (let i = start; i <= end; i++) arr.push(i);
+        return arr;
+    }, [page, totalPages]);
+
     const sortIcon = (f: string) => sort.field === f ? (sort.dir === "asc" ? " ↑" : " ↓") : " ↕";
 
     const COLS = ["SKU", "Name", "Qty", "Zone", "RFID", "Created", "Actions"];
     const SORT_COLS: Record<string, string> = { SKU: "sku", Name: "name", Qty: "quantity", Created: "createdAt" };
 
-    const items = data?.content ?? [];
-    const totalPages = data?.totalPages ?? 0;
-    const totalElements = data?.totalElements ?? 0;
+
 
     return (
         <>
@@ -176,6 +187,7 @@ export function InventoryPage() {
                         </tbody>
                     </table>
                 </div>
+                
             </div>
         </>
     );
