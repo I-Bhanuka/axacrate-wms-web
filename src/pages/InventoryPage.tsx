@@ -55,6 +55,19 @@ export function InventoryPage() {
         },
     });
 
+    const handleSort = (field: string) => {
+        setSort(s => s.field === field
+            ? { field, dir: s.dir === "asc" ? "desc" : "asc" }
+            : { field, dir: "asc" }
+        );
+        setPage(0);
+    };
+
+    const sortIcon = (f: string) => sort.field === f ? (sort.dir === "asc" ? " ↑" : " ↓") : " ↕";
+
+    const COLS = ["SKU", "Name", "Qty", "Zone", "RFID", "Created", "Actions"];
+    const SORT_COLS: Record<string, string> = { SKU: "sku", Name: "name", Qty: "quantity", Created: "createdAt" };
+
     const items = data?.content ?? [];
     const totalPages = data?.totalPages ?? 0;
     const totalElements = data?.totalElements ?? 0;
@@ -78,7 +91,7 @@ export function InventoryPage() {
 
             <div className="bg-card border border-border rounded-xl overflow-hidden">
                 {/* Filter bar, table, pagination go here in later commits */}
-                
+
                 {/* Filter bar */}
                 <div className="p-4 border-b border-border flex flex-wrap gap-2.5 items-center">
                     <div className="relative flex-1 min-w-[200px]">
