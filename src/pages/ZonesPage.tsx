@@ -7,6 +7,9 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { PageHeader } from "../components/ui/PageHeader";
+import { Button } from "../components/ui/button";
+import { Plus } from "lucide-react";
 import type { Zone } from "../types";
 
 export function ZonesPage() {
@@ -18,5 +21,17 @@ export function ZonesPage() {
   const [editName, setEditName] = useState("");
   const [editCap,  setEditCap]  = useState("");
 
-  return <div>Zones Page</div>;
+  return (
+    <>
+      {/* ── Page header ─────────────────────────────────────────────────────── */}
+      <PageHeader title="Zones" subtitle="Manage warehouse zones">
+        <Button size="sm" onClick={() => navigate("/zones/create")}>
+          <Plus size={16} className="mr-1.5" />
+          New Zone
+        </Button>
+      </PageHeader>
+
+      <div>Zones Page</div>
+    </>
+  );
 }
