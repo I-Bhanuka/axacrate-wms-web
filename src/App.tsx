@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AdminRoute } from "./components/AdminRoute";  
 
 // Pages
 import { LoginPage }      from "./pages/LoginPage";
@@ -11,6 +12,7 @@ import MovementsPage      from "./pages/MovementsPage";
 import { CreateItemPage } from "./pages/CreateItemPage";
 import { AlertsPage }     from "./pages/AlertsPage";
 import { InventoryPage } from "./pages/InventoryPage";
+import { UserManagementPage } from "./pages/UserManagementPage";
 
 
 // TODO: Add othrer pages and their routes here
@@ -33,7 +35,15 @@ export default function App() {
               <Route path="/createItem"      element={<CreateItemPage />} />
               <Route path="/alerts"             element={<AlertsPage />}     />
               <Route path="/inventory"          element={<InventoryPage />}  />
+
+              {/* Admin-only routes */}
+              {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
+              <Route element={<AdminRoute />}>
+                <Route path="/users" element={<UserManagementPage />} />
+              </Route>
+            
             </Route>
+            
           </Route>
 
           {/* Fallback */}
