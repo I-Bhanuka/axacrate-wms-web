@@ -11,6 +11,8 @@ import type {
   ZoneCreateRequest,
   ZoneUpdateRequest,
   RfidScanResponse,
+  InventoryFilters,
+  PageResponse,
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
 
@@ -68,6 +70,25 @@ export const api = {
     const res = await http.post<ApiResponse<InventoryItem>>("/api/inventory/create", data);
     return res.data.data;
   },
+
+  getItems: async (filters: InventoryFilters): Promise<PageResponse<InventoryItem>> => {
+    const { query, page = 0, size = 20, sort = "createdAt,desc", zoneId, minQuantity, maxQuantity } = filters;
+    if (query && query.length >= 3) {
+      const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory/search", {
+        params: { query, page, size },
+      });
+      return res.data.data;
+    }
+    const params: Record<string, unknown> = { page, size, sort };
+    if (zoneId)       params.zoneId      = zoneId;
+    if (minQuantity !== "") params.minQuantity = minQuantity;
+    if (maxQuantity !== "") params.maxQuantity = maxQuantity;
+    const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory", { params });
+    return res.data.data;
+  },
+
+
+
   
 
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
