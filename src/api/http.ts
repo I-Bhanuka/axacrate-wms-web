@@ -13,6 +13,8 @@ import type {
   RfidScanResponse,
   InventoryFilters,
   PageResponse,
+  UserResponseDTO,
+  CreateUserRequest
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
 
@@ -142,7 +144,7 @@ export const api = {
     return res.data.data;
   },
 
-  // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
+  // ── RFID (M2 - Sheshan) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
     pollRfid: async (): Promise<RfidScanResponse | null> => {
     const res = await http.get<ApiResponse<RfidScanResponse | null>>("/api/rfid/write-latest");
@@ -157,12 +159,8 @@ export const api = {
         });
         return res.data.data;
       },
-  
 
 
-  // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
-  // TODO: getWarehouses for dropdown
-  
 
   // ── Alerts (M4 - Pulindu) ──────────────────────────────────────────────────────────────
   getAlerts: async (status?: string): Promise<Alert[]> => {
@@ -194,6 +192,34 @@ export const api = {
     const res = await http.post<ApiResponse<Alert>>("/api/alerts", data);
     return res.data.data;
   },
+
+
+  // ── User Management (M1 - Bhanuka) ────────────────────────────────────────────────────────────
+  getUsers: async (): Promise<UserResponseDTO[]> => {
+    const res = await http.get<ApiResponse<UserResponseDTO[]>>("/api/admin/users");
+    return res.data.data;
+  },
+
+  createUser: async (data: CreateUserRequest): Promise<UserResponseDTO> => {
+    const res = await http.post<ApiResponse<UserResponseDTO>>("/api/admin/users", data);
+    return res.data.data;
+  },
+
+  updateUserRole: async (id: string, data: { role: string }): Promise<UserResponseDTO> => {
+    const res = await http.put<ApiResponse<UserResponseDTO>>(`/api/admin/users/${id}/role`, data);
+    return res.data.data;
+  },
+
+  deleteUser: async (id: string): Promise<void> => {
+    await http.delete(`/api/admin/users/${id}`);
+  },
+    
+
+  
+  // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
+  // TODO: getWarehouses for dropdown
+
+  
 };
 
 
