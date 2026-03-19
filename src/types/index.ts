@@ -132,6 +132,27 @@ export interface InventoryItemCreateRequest {
 }
 
 
+export interface PageResponse<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+}
+
+
+export interface InventoryFilters {
+  page?: number;
+  size?: number;
+  sort?: string;
+  zoneId?: string;
+  minQuantity?: number | string;
+  maxQuantity?: number | string;
+  query?: string;
+}
+
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // RFID  (M1 - Bhanuka)
 // ─────────────────────────────────────────────────────────────────────────────
