@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
@@ -19,7 +19,6 @@ import { ZoneBadge } from "../components/ui/ZoneBadge";
 export function ZonesPage() {
   const navigate = useNavigate();
   const qc       = useQueryClient();
-
   const [search,   setSearch]   = useState("");
   const [editZone, setEditZone] = useState<Zone | null>(null);
   const [editName, setEditName] = useState("");
@@ -29,6 +28,16 @@ export function ZonesPage() {
   const { data: zones = [], isLoading } = useQuery({
     queryKey: QUERY_KEYS.zones.all,
     queryFn:  api.getZones,
+  });
+
+  // ── Update zone mutation ───────────────────────────────────────────────────
+  const updateMutation = useMutation({
+    mutationFn: ({ warehouseName, name, data }: { warehouseName: string; name: string; data: { name?: string; capacity?: number } }) =>
+      api.updateZone(warehouseName, name, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+      setEditZone(null);
+    },
   });
 
   // ── Filter zones by search ─────────────────────────────────────────────────
