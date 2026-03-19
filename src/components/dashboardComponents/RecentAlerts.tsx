@@ -122,5 +122,73 @@ export function RecentAlerts() {
     );
   }
 
-  return <div />;
+  
+  // ── Alert list ─────────────────────────────────────────────────────────────
+
+  return (
+    <div>
+      <div className="divide-y divide-white/[0.04]">
+        {alerts.map((alert) => {
+          const cfg = SEVERITY_CONFIG[alert.severity] ?? SEVERITY_CONFIG.LOW;
+          const isPending = alert.alertStatus === "PENDING";
+
+          return (
+            <div
+              key={alert.id}
+              className={`
+                flex items-start gap-3 px-4 py-3
+                border-l-2 ${cfg.border}
+                ${isPending ? "bg-white/[0.015]" : ""}
+                transition-colors hover:bg-white/[0.025] cursor-default
+              `}
+            >
+              {/* Severity dot */}
+              <div className={`mt-1.5 h-1.5 w-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
+
+              {/* Main content */}
+              <div className="flex-1 min-w-0">
+
+                {/* Top row: type name + severity badge */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[12px] font-medium text-white/75 truncate">
+                    {friendlyType(alert.alertType)}
+                  </span>
+                  <span className={`inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded-full border flex-shrink-0 ${cfg.badge}`}>
+                    {alert.severity}
+                  </span>
+                  {isPending && (
+                    <span className="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded-full border flex-shrink-0 bg-red-500/15 text-red-400 border-red-500/30">
+                      PENDING
+                    </span>
+                  )}
+                </div>
+
+                {/* Message — truncated to one line */}
+                {alert.message && (
+                  <p className="text-[11px] text-white/35 mt-0.5 truncate">
+                    {alert.message}
+                  </p>
+                )}
+
+              </div>
+
+              {/* Right side: zone + time */}
+              <div className="flex flex-col items-end gap-0.5 flex-shrink-0 text-right">
+                {alert.zoneName && (
+                  <span className="text-[10px] text-white/30 font-medium truncate max-w-[80px]">
+                    {alert.zoneName}
+                  </span>
+                )}
+                <span className="text-[10px] text-white/20 flex items-center gap-1">
+                  <Clock size={9} />
+                  {timeAgo(alert.createdAt)}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    
+    </div>
+  );
 }
