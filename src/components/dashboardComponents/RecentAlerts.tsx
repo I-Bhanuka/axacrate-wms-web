@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../api/http";
 import { Skeleton } from "../ui/skeleton";
 import type { AlertItemDashboard } from "@/types";
-import { AlertTriangle, ShieldCheck, Clock } from "lucide-react";
+import { ArrowRight , ShieldCheck, Clock } from "lucide-react";
 
 
 // ─── Severity styles ──────────────────────────────────────────────────────────
@@ -199,7 +199,7 @@ export function RecentAlerts() {
           {(allAlerts as AlertItemDashboard[]).length} total alerts
         </span>
         <span className="text-[11px] text-orange-400/70 hover:text-orange-400 transition-colors font-medium">
-          View all →
+          View all <ArrowRight size={12} className="inline-block ml-1" />
         </span>
       </div>
 
