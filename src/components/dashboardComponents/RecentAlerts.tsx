@@ -52,6 +52,30 @@ const STATUS_STYLE: Record<string, string> = {
   RESOLVED:     "text-emerald-400",
 };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+// Converts "UNAUTHORIZED_MOVEMENT" → "Unauthorized Movement"
+function friendlyType(type: string): string {
+  return type
+    .toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// Converts ISO timestamp into a relative "2m ago" / "3h ago" / "Jan 5" string
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins  = Math.floor(diff / 60_000);
+  const hours = Math.floor(diff / 3_600_000);
+  const days  = Math.floor(diff / 86_400_000);
+
+  if (mins < 1)   return "just now";
+  if (mins < 60)  return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7)   return `${days}d ago`;
+
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
