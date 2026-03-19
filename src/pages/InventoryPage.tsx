@@ -61,7 +61,7 @@ export function InventoryPage() {
 
     return (
         <>
-        {/* Delete confirmation modal */}
+            {/* Delete confirmation modal */}
             {deleteTarget && (
                 <ConfirmModal
                     title="Delete Item"
@@ -78,6 +78,35 @@ export function InventoryPage() {
 
             <div className="bg-card border border-border rounded-xl overflow-hidden">
                 {/* Filter bar, table, pagination go here in later commits */}
+                
+                {/* Filter bar */}
+                <div className="p-4 border-b border-border flex flex-wrap gap-2.5 items-center">
+                    <div className="relative flex-1 min-w-[200px]">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">🔍</span>
+                        <Input
+                            className="pl-8"
+                            placeholder="Search SKU, name or RFID (min 3 chars)…"
+                            value={search}
+                            onChange={e => { setSearch(e.target.value); setPage(0); }}
+                        />
+                    </div>
+                    <select
+                        className="h-9 px-3 text-sm bg-background border border-input rounded-md min-w-[130px]"
+                        value={filters.zoneId}
+                        onChange={e => { setFilters(f => ({ ...f, zoneId: e.target.value })); setPage(0); }}
+                    >
+                        <option value="">All Zones</option>
+                        {zones.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
+                    </select>
+                    <Input type="number" placeholder="Min Qty" className="w-24"
+                        value={filters.minQty} onChange={e => { setFilters(f => ({ ...f, minQty: e.target.value })); setPage(0); }} />
+                    <Input type="number" placeholder="Max Qty" className="w-24"
+                        value={filters.maxQty} onChange={e => { setFilters(f => ({ ...f, maxQty: e.target.value })); setPage(0); }} />
+                    <Button variant="outline" size="sm"
+                        onClick={() => { setFilters({ zoneId: "", minQty: "", maxQty: "" }); setSearch(""); setPage(0); }}>
+                        Clear
+                    </Button>
+                </div>
             </div>
         </>
     );
