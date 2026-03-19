@@ -76,6 +76,7 @@ export function CreateItemPage() {
     }); // This sets up a mutation using React Query to handle the API call for creating a new inventory item. 
 
     const submit = () => {
+        if (scanState === "warning") return;
         if (!validate()) return;
         createMutation.mutate();
     };
