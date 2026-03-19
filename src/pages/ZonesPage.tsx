@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import type { Zone } from "../types";
 
 export function ZonesPage() {
@@ -30,6 +30,18 @@ export function ZonesPage() {
           New Zone
         </Button>
       </PageHeader>
+
+      {/* ── Search bar ──────────────────────────────────────────────────────── */}
+      <div className="relative mb-5">
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+        <input
+          type="text"
+          placeholder="Search by zone or warehouse name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-lg border border-border bg-white/5 pl-9 pr-4 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-white/20"
+        />
+      </div>
 
       <div>Zones Page</div>
     </>
