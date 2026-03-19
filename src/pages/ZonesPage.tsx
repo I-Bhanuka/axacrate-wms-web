@@ -12,7 +12,7 @@ import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Warehouse } from "lucide-react";
 import type { Zone } from "../types";
 
 export function ZonesPage() {
@@ -25,10 +25,17 @@ export function ZonesPage() {
   const [editCap,  setEditCap]  = useState("");
 
   // ── Fetch all zones ────────────────────────────────────────────────────────
-  const { data: _zones = [], isLoading } = useQuery({
+  const { data: zones = [], isLoading } = useQuery({
     queryKey: QUERY_KEYS.zones.all,
     queryFn:  api.getZones,
   });
+
+  // ── Filter zones by search ─────────────────────────────────────────────────
+  const filtered = zones.filter((z) =>
+    z.name.toLowerCase().includes(search.toLowerCase()) ||
+    z.warehouseName.toLowerCase().includes(search.toLowerCase())
+  );
+
 
   return (
     <>
@@ -79,6 +86,19 @@ export function ZonesPage() {
                 ))}
               </tr>
             ))}
+
+            {/* Empty state */}
+            {!isLoading && filtered.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-4 py-16 text-center">
+                  <div className="flex flex-col items-center gap-2 text-gray-500">
+                    <Warehouse size={32} className="opacity-30" />
+                    <p className="text-xs text-white font-medium">No zones found</p>
+                    {search && <p className="text-[11px] text-white font-medium">Try a different search term</p>}
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
