@@ -95,5 +95,21 @@ export function RecentAlerts() {
   // For debugging:
   console.log("RecentAlerts data:", alerts);
 
+  // ── Loading state ──────────────────────────────────────────────────────────
+
+  if (isLoading) {
+    return (
+      <div className="p-4 space-y-2.5">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <Skeleton className="h-2 w-2 rounded-full flex-shrink-0" />
+            <Skeleton className="h-4 flex-1" />
+            <Skeleton className="h-4 w-16" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return <div />;
 }
