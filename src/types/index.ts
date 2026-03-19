@@ -32,6 +32,17 @@ export interface FeedEntry {
   isNew: boolean;
 }
 
+export interface AlertItemDashboard {
+  id: string;
+  alertType: string;      // e.g. "UNAUTHORIZED_MOVEMENT"
+  severity: string;       // "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"
+  alertStatus: string;    // "PENDING" | "ACKNOWLEDGED" | "RESOLVED"
+  message: string | null;
+  zoneName: string | null;
+  createdAt: string;      // ISO timestamp
+}
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
