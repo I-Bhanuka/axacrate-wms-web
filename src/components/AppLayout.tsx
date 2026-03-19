@@ -147,14 +147,6 @@ export function AppLayout() {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
 
-            {/* Shortcut to create inventory item */}
-            <NavLink
-              to="/inventory/create"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors"
-            >
-              <><Plus size={16} style={{ marginRight: 6 }} />New Item</>
-            </NavLink>
-
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-xs font-bold">
               {initials}
             </div>
