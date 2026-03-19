@@ -30,6 +30,20 @@ export function ZonesPage() {
     queryFn:  api.getZones,
   });
 
+  // ── Disable zone mutation ──────────────────────────────────────────────────
+  const disableMutation = useMutation({
+    mutationFn: ({ warehouseName, name }: { warehouseName: string; name: string }) =>
+      api.disableZone(warehouseName, name),
+    onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all }),
+  });
+
+  // ── Enable zone mutation ───────────────────────────────────────────────────
+  const enableMutation = useMutation({
+    mutationFn: ({ warehouseName, name }: { warehouseName: string; name: string }) =>
+      api.enableZone(warehouseName, name),
+    onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all }),
+  });
+
   // ── Update zone mutation ───────────────────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: ({ warehouseName, name, data }: { warehouseName: string; name: string; data: { name?: string; capacity?: number } }) =>
