@@ -111,5 +111,16 @@ export function RecentAlerts() {
     );
   }
 
+  // ── Empty state ────────────────────────────────────────────────────────────
+
+  if (alerts.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-2.5 py-10 text-white/20">
+        <ShieldCheck size={28} className="text-emerald-500/40" />
+        <p className="text-xs font-medium">No alerts — all systems clear</p>
+      </div>
+    );
+  }
+
   return <div />;
 }
