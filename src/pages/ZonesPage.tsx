@@ -5,8 +5,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/http";
+import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
 import { Plus, Search } from "lucide-react";
@@ -20,6 +22,12 @@ export function ZonesPage() {
   const [editZone, setEditZone] = useState<Zone | null>(null);
   const [editName, setEditName] = useState("");
   const [editCap,  setEditCap]  = useState("");
+
+  // ── Fetch all zones ────────────────────────────────────────────────────────
+  const { data: _zones = [], isLoading: _isLoading } = useQuery({
+    queryKey: QUERY_KEYS.zones.all,
+    queryFn:  api.getZones,
+  });
 
   return (
     <>
