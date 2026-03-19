@@ -210,6 +210,55 @@ export interface CreateAlertRequest {
   zoneId?: string | null;
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User management (M1 - Bhanuka)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface UserItem {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  role: string;
+}
+
+export interface CreateUserForm {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  password: string;
+  role: string;
+}
+
+export interface UserResponseDTO {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  role: string;       // "ADMIN" | "MANAGER" | "WORKER"
+}
+
+export interface CreateUserRequest {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  password: string;
+  role: string;
+}
+
+// Geofence
+export interface GeofenceRule {
+  from: string;   // e.g. "UNLOADING_ZONE"
+  to: string;     // e.g. "WRITER_ZONE"
+  label: string;  // e.g. "Standard inbound"
+}
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // GEOFENCING  (M5 - Daniru)
 // ─────────────────────────────────────────────────────────────────────────────
