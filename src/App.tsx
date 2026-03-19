@@ -10,6 +10,7 @@ import { DashboardPage }  from "./pages/DashboardPage";
 import MovementsPage      from "./pages/MovementsPage";
 import { CreateItemPage } from "./pages/CreateItemPage";
 import { AlertsPage }     from "./pages/AlertsPage";
+import { InventoryPage } from "./pages/InventoryPage";
 
 
 // TODO: Add othrer pages and their routes here
@@ -31,6 +32,7 @@ export default function App() {
               <Route path="/movements" element={<MovementsPage />} />
               <Route path="/createItem"      element={<CreateItemPage />} />
               <Route path="/alerts"             element={<AlertsPage />}     />
+              <Route path="/inventory"          element={<InventoryPage />}  />
             </Route>
           </Route>
 
