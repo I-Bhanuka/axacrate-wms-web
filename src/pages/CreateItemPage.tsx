@@ -10,6 +10,8 @@ import { Label } from "../components/ui/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../lib/queryClient";
 import { getErrorMessage } from "../lib/utils";
+import { ItemCreateSuccess } from "../components/InventoryComponent/ItemCreateSuccess";
+
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
 
@@ -29,6 +31,8 @@ export function CreateItemPage() {
         setForm(f => ({ ...f, [field]: e.target.value }));   //This is a helper function to update the form state when the user types into the input fields. 
 
     const [errors, setErrors] = useState<Record<string, string>>({}); //This state is intended to hold any validation errors for the form fields, allowing the UI to display error messages next to the relevant inputs.
+
+    const [created, setCreated] = useState(false);
 
     const startScan = () => {
         setScanState("scanning");
@@ -66,7 +70,8 @@ export function CreateItemPage() {
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.inventory.all });
-            navigate("/inventory");
+            setCreated(true);
+            //etTimeout(() => navigate("/inventory"), 1500);
         },
     }); // This sets up a mutation using React Query to handle the API call for creating a new inventory item. 
 
@@ -75,7 +80,31 @@ export function CreateItemPage() {
         createMutation.mutate();
     };
 
+    // Success state return
+    if (created) {
+    return (
+        <>
+            <PageHeader title="Create Item" subtitle="Register a new inventory item with RFID tag">
+                <Button variant="outline" onClick={() => navigate("/inventory")}>← Back</Button>
+            </PageHeader>
 
+            <div className="max-w-xl">
+                <ItemCreateSuccess
+                    onScanAnother={() => {
+                        setCreated(false);
+                        setScanState("idle");
+                        setTagData(null);
+                        setForm({ sku: "", name: "", quantity: "" });
+                        setErrors({});
+                    }}
+                    onGoToInventory={() => navigate("/inventory")}
+                />
+            </div>
+        </>
+        );
+    }
+
+    // Main return 
     return (
         <>
             <PageHeader title="Create Item" subtitle="Register a new inventory item with RFID tag">
@@ -104,12 +133,12 @@ export function CreateItemPage() {
                                 </div>
                             </>)}
                             {scanState === "found" && (<>
-                                <div className="text-3xl mb-2"><SearchCheck /></div>
+                                <div className="text-3xl mb-2 flex items-center justify-center"><SearchCheck /></div>
                                 <div className="font-semibold text-green-400 mb-1">Tag Detected!</div>
                                 <div className="font-mono text-sm bg-muted/50 rounded px-3 py-1 inline-block mt-1">{tagData?.tagUid}</div>
                             </>)}
                             {scanState === "warning" && (<>
-                                <div className="text-3xl mb-2"><SearchAlert /></div>
+                                <div className="text-3xl mb-2 flex items-center justify-center"><SearchAlert /></div>
                                 <div className="font-semibold text-yellow-400 mb-1">Tag Already Assigned</div>
                                 <div className="text-sm mb-3">Linked to: <strong>{tagData?.itemName}</strong> ({tagData?.sku})</div>
                                 <div className="flex gap-2 justify-center">
@@ -163,12 +192,12 @@ export function CreateItemPage() {
                                         </Button>
 
                                     </div>
-
                                 </div>
                             </div>
                         )}
                     </div>
                 </div>
+
             </div>
         </>
     );
