@@ -17,6 +17,7 @@ import { Input } from "../components/ui/input";
 import { Skeleton } from "../components/ui/skeleton";
 import { ConfirmModal } from "../components/ui/ConfirmModal";
 import type { InventoryItem } from "../types";
+import { Search, Mailbox } from 'lucide-react';
 
 export function InventoryPage() {
     const navigate = useNavigate();
@@ -95,7 +96,7 @@ export function InventoryPage() {
                 {/* Filter bar */}
                 <div className="p-4 border-b border-border flex flex-wrap gap-2.5 items-center">
                     <div className="relative flex-1 min-w-[200px]">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">🔍</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm"><Search className="w-4 h-4" /></span>
                         <Input
                             className="pl-8"
                             placeholder="Search SKU, name or RFID (min 3 chars)…"
@@ -119,6 +120,61 @@ export function InventoryPage() {
                         onClick={() => { setFilters({ zoneId: "", minQty: "", maxQty: "" }); setSearch(""); setPage(0); }}>
                         Clear
                     </Button>
+                </div>
+
+                {/* Table */}
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[700px]">
+                        <thead>
+                            <tr className="border-b border-border bg-muted/20">
+                                {COLS.map(h => (
+                                    <th key={h}
+                                        className={`text-left text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-4 py-3 whitespace-nowrap ${SORT_COLS[h] ? "cursor-pointer hover:text-foreground select-none" : ""}`}
+                                        onClick={() => SORT_COLS[h] && handleSort(SORT_COLS[h])}
+                                    >
+                                        {h}{SORT_COLS[h] && <span className="opacity-50">{sortIcon(SORT_COLS[h])}</span>}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isLoading ? (
+                                Array.from({ length: 8 }).map((_, i) => (
+                                    <tr key={i} className="border-b border-border">
+                                        {COLS.map(c => <td key={c} className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>)}
+                                    </tr>
+                                ))
+                            ) : items.length === 0 ? (
+                                <tr><td colSpan={COLS.length}>
+                                    <div className="flex flex-col items-center py-14 text-muted-foreground gap-1">
+                                        <span className="text-4xl opacity-30"><Mailbox className="w-10 h-10" /></span>
+                                        <span className="font-semibold text-foreground text-sm mt-2">No items found</span>
+                                        <span className="text-xs">Try adjusting your search or filters</span>
+                                    </div>
+                                </td></tr>
+                            ) : items.map(item => (
+                                <tr key={item.id} className="border-b border-border hover:bg-muted/20 transition-colors">
+                                    <td className="px-4 py-3 font-mono text-[11px] text-blue-400">{item.sku}</td>
+                                    <td className="px-4 py-3 font-medium text-sm">{item.name}</td>
+                                    <td className="px-4 py-3 font-mono text-sm">
+                                        <span className={item.quantity < 10 ? "text-red-400 font-bold" : ""}>
+                                            {fmtNum(item.quantity)}{item.quantity < 10 && " ⚠"}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3"><ZoneBadge zone={item.currentZoneName} /></td>
+                                    <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">{item.rfidTagUid?.slice(0, 10)}…</td>
+                                    <td className="px-4 py-3 text-xs text-muted-foreground">{fmtDate(item.createdAt)}</td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex gap-1.5">
+                                            <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.id}`)}>View</Button>
+                                            <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.sku}/edit`)}>Edit</Button>
+                                            <Button size="sm" variant="destructive" onClick={() => setDeleteTarget(item)}>Del</Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </>
