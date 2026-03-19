@@ -35,8 +35,21 @@ export function ZonesPage() {
     z.name.toLowerCase().includes(search.toLowerCase()) ||
     z.warehouseName.toLowerCase().includes(search.toLowerCase())
   );
+  
+  // ── Status badge style ─────────────────────────────────────────────────────
+  const statusBadge = (status: string) =>
+    status === "ACTIVE"
+      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+      : "bg-red-500/10 text-red-400 border border-red-500/20";
 
-
+  // ── Capacity bar color based on utilization ────────────────────────────────
+  const utilizationColor = (current: number, capacity: number) => {
+    const pct = capacity > 0 ? (current / capacity) * 100 : 0;
+    if (pct >= 90) return "bg-red-500";
+    if (pct >= 70) return "bg-yellow-500";
+    return "bg-indigo-500";
+  };
+  
   return (
     <>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
