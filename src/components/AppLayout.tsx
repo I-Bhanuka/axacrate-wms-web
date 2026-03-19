@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { api } from "../api/http";
-import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose } from "lucide-react";
+import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users } from "lucide-react";
 import logo from "../assets/logo.png";
 import { LiveFeed } from "./LiveFeed";
 
@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/> },
   { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> },
   { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> },
+  { to: "/users", label: "User Management", icon: <Users size={18}/>, adminOnly: true },
 ];
 
 export function AppLayout() {
@@ -23,6 +24,7 @@ export function AppLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const isAdmin = user?.role === "ADMIN";
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
   const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
@@ -85,7 +87,7 @@ export function AppLayout() {
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 py-2 pt-3">
             Navigation
           </div>
-          {NAV_ITEMS.map(item => (
+          {NAV_ITEMS.filter(item => !item.adminOnly || isAdmin).map(item  => (
             <NavLink
               key={item.to}
               to={item.to}
