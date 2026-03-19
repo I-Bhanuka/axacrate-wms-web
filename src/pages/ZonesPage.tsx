@@ -14,6 +14,7 @@ import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
 import { Plus, Search, Warehouse } from "lucide-react";
 import type { Zone } from "../types";
+import { ZoneBadge } from "../components/ui/ZoneBadge";
 
 export function ZonesPage() {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export function ZonesPage() {
     if (pct >= 70) return "bg-yellow-500";
     return "bg-indigo-500";
   };
-  
+
   return (
     <>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
@@ -112,6 +113,65 @@ export function ZonesPage() {
                 </td>
               </tr>
             )}
+
+            {/* Zone rows */}
+            {!isLoading && filtered.map((zone, idx) => {
+              const utilPct = zone.capacity > 0
+                ? Math.min(Math.round((zone.currentItemCount / zone.capacity) * 100), 100)
+                : 0;
+
+              return (
+                <tr
+                  key={zone.id}
+                  className={`border-b border-border/50 hover:bg-white/[0.02] transition ${idx === filtered.length - 1 ? "border-b-0" : ""}`}
+                >
+                  {/* Zone name */}
+                  <td className="px-3 py-2">
+                    <ZoneBadge zone={zone.name} />
+                  </td>
+
+                  {/* Warehouse */}
+                  <td className="px-3 py-2 text-gray-400 font-medium">{zone.warehouseName}</td>
+
+                  {/* Zone type */}
+                  <td className="px-3 py-2 text-gray-400 font-medium">
+                    {zone.zoneType.replace(/_/g, " ")}
+                  </td>
+
+                  {/* Capacity with progress bar */}
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 bg-white/5 rounded-full h-1.5">
+                        <div
+                          className={`h-1.5 rounded-full ${utilizationColor(zone.currentItemCount, zone.capacity)}`}
+                          style={{ width: `${utilPct}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400 font-medium whitespace-nowrap">
+                        {zone.currentItemCount} / {zone.capacity}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Status badge */}
+                  <td className="px-3 py-2">
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${statusBadge(zone.status)}`}>
+                      {zone.status}
+                    </span>
+                  </td>
+
+                  {/* Hardware */}
+                  <td className="px-3 py-2 text-xs text-gray-400 font-medium">
+                    {zone.hasHardware ? (zone.hardwareName ?? "Connected") : "None"}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-3 py-2">
+
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
