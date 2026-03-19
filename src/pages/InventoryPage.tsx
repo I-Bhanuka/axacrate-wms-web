@@ -59,5 +59,26 @@ export function InventoryPage() {
     const totalPages = data?.totalPages ?? 0;
     const totalElements = data?.totalElements ?? 0;
 
-    return <></>;
+    return (
+        <>
+        {/* Delete confirmation modal */}
+            {deleteTarget && (
+                <ConfirmModal
+                    title="Delete Item"
+                    body={`Delete "${deleteTarget.sku} — ${deleteTarget.name}"? This cannot be undone.`}
+                    onConfirm={() => deleteMutation.mutate(deleteTarget.sku)}
+                    onCancel={() => setDeleteTarget(null)}
+                    loading={deleteMutation.isPending}
+                />
+            )}
+
+            <PageHeader title="Inventory" subtitle={`${fmtNum(totalElements)} total items`}>
+                <Button onClick={() => navigate("/createItem")}>+ Create Item</Button>
+            </PageHeader>
+
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+                {/* Filter bar, table, pagination go here in later commits */}
+            </div>
+        </>
+    );
 }
