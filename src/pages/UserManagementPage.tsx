@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { CreateUserForm } from "@/types";
+import { Shield } from "lucide-react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -33,3 +34,15 @@ const EMPTY_FORM: CreateUserForm = {
   firstName: "", lastName: "", phoneNumber: "",
   username: "", password: "", role: "WORKER",
 };
+
+
+// ─── Role badge ───────────────────────────────────────────────────────────────
+
+function RoleBadge({ role }: { role: string }) {
+  return (
+    <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${ROLE_BADGE[role] ?? "bg-white/10 text-white/50 border-white/10"}`}>
+      <Shield className="h-2.5 w-2.5" />
+      {role}
+    </span>
+  );
+}
