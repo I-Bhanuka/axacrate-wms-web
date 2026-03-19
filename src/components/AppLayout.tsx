@@ -10,7 +10,7 @@ import { LiveFeed } from "./LiveFeed";
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/> },
   { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/> },
-  { to: "/inventory/create", label: "Create Item", icon: <Plus size={18}/> },
+  { to: "/createItem", label: "Create Item", icon: <Plus size={18}/> },
   { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/> },
   { to: "/zones", label: "Zones", icon: <Grid size={18}/> },
   { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/> },

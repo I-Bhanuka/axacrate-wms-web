@@ -5,7 +5,7 @@ interface DataTableProps<T> {
   data: T[];
   loading?: boolean;
   skeletonRows?: number;
-  emptyIcon?: string;
+  emptyIcon: React.ReactNode;
   emptyTitle?: string;
   emptySubtitle?: string;
   renderRow: (item: T, index: number) => React.ReactNode;

@@ -32,17 +32,76 @@ export interface FeedEntry {
   isNew: boolean;
 }
 
+export interface AlertItemDashboard {
+  id: string;
+  alertType: string;      // e.g. "UNAUTHORIZED_MOVEMENT"
+  severity: string;       // "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"
+  alertStatus: string;    // "PENDING" | "ACKNOWLEDGED" | "RESOLVED"
+  message: string | null;
+  zoneName: string | null;
+  createdAt: string;      // ISO timestamp
+}
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: loginRequest, AuthUser
 
+export interface LoginRequest {
 
+  username: string;
+
+  password: string;
+
+}
+
+
+
+export interface AuthUser {
+
+  token: string;
+
+  username: string;
+
+  role: string;
+
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: Zone, ZoneCreateRequest, ZoneUpdateRequest
+// TODO: ZoneUpdateRequest
 
+// Represents a zone as returned by the backend
+export interface Zone {
+  id: string;
+  name: string;
+  zoneType: string;
+  capacity: number;
+  currentItemCount: number;
+  warehouseName: string;
+  status: "ACTIVE" | "INACTIVE";
+  hasHardware: boolean;
+  hardwareName: string | null;
+  hardwareType: string | null;
+  hardwareStatus: string | null;
+}
+
+// Request payload for creating a new zone
+export interface ZoneCreateRequest {
+  name: string;
+  zoneType: string;
+  warehouseName: string;
+  capacity: number;
+  status: string;
+}
+
+// Request payload for updating an existing zone (All fields when updating are optional)
+export interface ZoneUpdateRequest {
+  name?: string;
+  capacity?: number;
+  status?: string;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INVENTORY  (M2)
@@ -77,19 +136,58 @@ export interface InventoryItemCreateRequest {
 // RFID  (M1 - Bhanuka)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: RfidScanResponse, RfidTagStatus
+export type RfidTagStatus = "UNASSIGNED" | "ASSIGNED" | "NEW_TAG";
+
+
+export interface RfidScanResponse {
+  tagUid: string;
+  status: RfidTagStatus;
+  currentZone: string | null;
+  itemName?: string;
+  sku?: string;
+  inventoryItemId?: string;
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MOVEMENT LOG  (M6 - Ahintha)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: MovementLog
+export interface MovementLog {
+  id: string;
+  fromZoneName: string | null;
+  toZoneName: string | null;
+  eventType: string;
+  occurredAt: string;
+  hardwareType: string | null;
+  synced: boolean;
+  itemSku: string | null;
+  itemName: string | null;
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ALERTS  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: Alert
+export interface Alert {
+  id: string;
+  alertType: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  alertStatus: "PENDING" | "ACKNOWLEDGED" | "RESOLVED";
+  message: string | null;
+  zoneId: string | null;
+  zoneName: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+  resolvedByUsername: string | null;
+}
 
+export interface CreateAlertRequest {
+  alertType: string;
+  severity: string;
+  message: string;
+  zoneId?: string | null;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GEOFENCING  (M5 - Daniru)

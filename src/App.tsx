@@ -7,6 +7,11 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 // Pages
 import { LoginPage }      from "./pages/LoginPage";
 import { DashboardPage }  from "./pages/DashboardPage";
+import MovementsPage      from "./pages/MovementsPage";
+import { CreateItemPage } from "./pages/CreateItemPage";
+import { AlertsPage }     from "./pages/AlertsPage";
+
+
 // TODO: Add othrer pages and their routes here
 
 export default function App() {
@@ -23,6 +28,9 @@ export default function App() {
             <Route element={<AppLayout />}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard"          element={<DashboardPage />}  />
+              <Route path="/movements" element={<MovementsPage />} />
+              <Route path="/createItem"      element={<CreateItemPage />} />
+              <Route path="/alerts"             element={<AlertsPage />}     />
             </Route>
           </Route>
 

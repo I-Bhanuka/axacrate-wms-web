@@ -42,4 +42,9 @@ export const QUERY_KEYS = {
   movements: {
     recent: (limit: number) => ["movements", "recent", limit] as const,
   },
+  alerts: {
+    all:        ["alerts"]                               as const,
+    filtered:   (status: string) => ["alerts", status]   as const,
+    unresolved: ["alerts", "unresolved"]                 as const,
+  },
 };
