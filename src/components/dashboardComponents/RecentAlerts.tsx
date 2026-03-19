@@ -138,7 +138,7 @@ export function RecentAlerts() {
               className={`
                 flex items-start gap-3 px-4 py-3
                 border-l-2 ${cfg.border}
-                ${isPending ? "bg-white/[0.015]" : ""}
+                ${isPending ? "bg-pink-500/[0.05]" : ""}
                 transition-colors hover:bg-white/[0.025] cursor-default
               `}
             >
@@ -156,11 +156,15 @@ export function RecentAlerts() {
                   <span className={`inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded-full border flex-shrink-0 ${cfg.badge}`}>
                     {alert.severity}
                   </span>
-                  {isPending && (
-                    <span className="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded-full border flex-shrink-0 bg-red-500/15 text-red-400 border-red-500/30">
-                      PENDING
-                    </span>
-                  )}
+                  
+                  <span
+                    className={`inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded-full border flex-shrink-0 ${
+                    STATUS_STYLE[alert.alertStatus] ?? "text-white/40"
+                    }`}
+                  >
+                   {alert.alertStatus}
+                  </span>
+ 
                 </div>
 
                 {/* Message — truncated to one line */}
