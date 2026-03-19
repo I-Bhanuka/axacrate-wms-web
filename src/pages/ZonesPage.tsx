@@ -11,6 +11,7 @@ import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
+import { Skeleton } from "../components/ui/skeleton";
 import { Plus, Search } from "lucide-react";
 import type { Zone } from "../types";
 
@@ -24,7 +25,7 @@ export function ZonesPage() {
   const [editCap,  setEditCap]  = useState("");
 
   // ── Fetch all zones ────────────────────────────────────────────────────────
-  const { data: _zones = [], isLoading: _isLoading } = useQuery({
+  const { data: _zones = [], isLoading } = useQuery({
     queryKey: QUERY_KEYS.zones.all,
     queryFn:  api.getZones,
   });
@@ -67,7 +68,18 @@ export function ZonesPage() {
               <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Actions</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody>
+            {/* Loading skeletons */}
+            {isLoading && Array.from({ length: 5 }).map((_, i) => (
+              <tr key={i} className="border-b border-border/50">
+                {Array.from({ length: 7 }).map((_, j) => (
+                  <td key={j} className="px-3 py-2">
+                    <Skeleton className="h-3 w-24" />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </>
