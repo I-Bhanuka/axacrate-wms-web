@@ -51,7 +51,25 @@ export function ZonesPage() {
         />
       </div>
 
-      <div>Zones Page</div>
+      {/* ── Table ───────────────────────────────────────────────────────────── */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <table className="w-full text-xs">
+
+          {/* Table header */}
+          <thead>
+            <tr className="border-b border-border">
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Zone Name</th>
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Warehouse</th>
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Type</th>
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Capacity</th>
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Status</th>
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Hardware</th>
+              <th className="px-3 py-2 text-center text-[10px] font-medium uppercase tracking-wider text-white">Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </>
   );
 }
