@@ -172,9 +172,8 @@ export function AppLayout() {
       </main>
 
       {/* Live feed sidebar */}
-      <div className="hidden xl:block">
-        <LiveFeed user={user} />
-      </div>
+      <LiveFeed user={user} />
+    
 
     </div>
   );
