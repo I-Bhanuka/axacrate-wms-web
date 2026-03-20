@@ -258,6 +258,54 @@ export function ZonesPage() {
           </div>
         )}
       </div>
+
+      {/* ── Edit modal ──────────────────────────────────────────────────────── */}
+      {editZone && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-xl">
+            <h2 className="text-sm font-semibold text-white mb-4">Edit Zone — {editZone.name}</h2>
+
+            {/* Zone name field */}
+            <div className="mb-3">
+              <label className="text-xs text-gray-400 mb-1 block">Zone Name</label>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+              />
+            </div>
+
+            {/* Capacity field */}
+            <div className="mb-5">
+              <label className="text-xs text-gray-400 mb-1 block">Capacity</label>
+              <input
+                type="number"
+                value={editCap}
+                onChange={(e) => setEditCap(e.target.value)}
+                className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+              />
+            </div>
+
+            {/* Modal action buttons */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setEditZone(null)}
+                className="flex-1 rounded-lg border border-border py-2 text-xs text-gray-400 hover:bg-white/5 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitEdit}
+                disabled={updateMutation.isPending}
+                className="flex-1 rounded-lg bg-indigo-600 py-2 text-xs text-white hover:bg-indigo-500 transition disabled:opacity-50"
+              >
+                {updateMutation.isPending ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
