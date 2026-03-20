@@ -160,6 +160,13 @@ export const api = {
         return res.data.data;
       },
 
+    getRecentActitvity: async (limit = 20): Promise<MovementLog[]> => {
+      const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/activity", {
+        params: { limit },
+      });
+      return res.data.data;
+    },
+
 
 
   // ── Alerts (M4 - Pulindu) ──────────────────────────────────────────────────────────────
