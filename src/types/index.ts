@@ -184,6 +184,39 @@ export interface MovementLog {
   itemSku: string | null;
   itemName: string | null;
 }
+//Low stock item (used in Low Stock Alerts page)
+
+export interface LowStockItem {
+  id: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  reorderLevel: number;
+  zoneName?: string | null;
+}
+
+export interface LowStockReportItem {
+  sku: string;
+  name: string;
+  quantity: number;
+  reorderThreshold: number;
+  zoneName: string | null;
+}
+export interface DashboardReportRequest {
+  recentMovementLimit: number;
+  includeLowStock: boolean;
+  includeRecentMovements: boolean;
+}
+
+export interface DashboardReport {
+  generatedAt: string;
+  totalItems: number;
+  totalQuantity: number;
+  lowStockCount: number;
+  activeZones: number;
+  lowStockItems: LowStockReportItem[];
+  recentMovements: MovementLog[];
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────
