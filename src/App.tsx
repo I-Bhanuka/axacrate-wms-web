@@ -14,6 +14,7 @@ import { AlertsPage }     from "./pages/AlertsPage";
 import { InventoryPage } from "./pages/InventoryPage";
 import { UserManagementPage } from "./pages/UserManagementPage";
 import { ZonesPage }       from "./pages/ZonesPage";
+import { CreateZonePage }  from "./pages/CreateZonePage";
 
 // TODO: Add othrer pages and their routes here
 
@@ -36,6 +37,7 @@ export default function App() {
               <Route path="/alerts"             element={<AlertsPage />}     />
               <Route path="/inventory"          element={<InventoryPage />}  />
               <Route path="/zones"        element={<ZonesPage />} />
+              <Route path="/zones/create" element={<CreateZonePage />} />
 
               {/* Admin-only routes */}
               {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
