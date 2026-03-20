@@ -168,6 +168,22 @@ export function CreateZonePage() {
           </select>
           {errors.status && <p className="mt-1 text-xs text-red-400">{errors.status}</p>}
         </div>
+
+        {/* API error message */}
+        {createMutation.isError && (
+          <p className="mb-4 text-xs text-red-400 text-center">
+            Failed to create zone. Please check your inputs and try again.
+          </p>
+        )}
+
+        {/* Submit button */}
+        <button
+          onClick={handleSubmit}
+          disabled={createMutation.isPending}
+          className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-500 transition disabled:opacity-50"
+        >
+          {createMutation.isPending ? "Creating..." : "Create Zone"}
+        </button>
       </div>
     </>
   );
