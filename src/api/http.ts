@@ -14,7 +14,10 @@ import type {
   InventoryFilters,
   PageResponse,
   UserResponseDTO,
-  CreateUserRequest
+  CreateUserRequest,
+  LowStockItem,
+  DashboardReport,
+  DashboardReportRequest,
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
 
@@ -63,6 +66,25 @@ export const api = {
   getDashboard: async (): Promise<DashboardSummary> => {
     const res = await http.get<ApiResponse<DashboardSummary>>("/api/inventory/dashboard");
     return res.data.data;
+  },
+  
+  getDashboardReport: async (
+    data: DashboardReportRequest
+  ): Promise<DashboardReport> => {
+    const res = await http.post<ApiResponse<DashboardReport>>(
+      "/api/reports/dashboard",
+      data
+    );
+    return res.data.data;
+  },
+
+  exportDashboardReportCsv: async (
+    data: DashboardReportRequest
+  ): Promise<Blob> => {
+    const res = await http.post("/api/reports/dashboard/export/csv", data, {
+      responseType: "blob",
+    });
+    return res.data;
   },
 
   // ── Inventory (M2 - Sheshan) ────────────────────────────────────────────────────────
@@ -166,6 +188,11 @@ export const api = {
       });
       return res.data.data;
     },
+      // ── Low Stock Alerts (M6 - Ahintha) ─────────────────────────────────────────────────────
+    getLowStockItems: async (): Promise<LowStockItem[]> => {
+    const res = await http.get<ApiResponse<LowStockItem[]>>("/api/inventory/low-stock");
+    return res.data.data;
+  },
 
 
 

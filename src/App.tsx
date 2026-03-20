@@ -14,6 +14,8 @@ import { AlertsPage }     from "./pages/AlertsPage";
 import { InventoryPage } from "./pages/InventoryPage";
 import { UserManagementPage } from "./pages/UserManagementPage";
 import { ZonesPage }       from "./pages/ZonesPage";
+import ReportsPage from "./pages/ReportsPage.tsx";
+import LowStockPage from "./pages/LowStockPage";
 import { CreateZonePage }  from "./pages/CreateZonePage";
 
 // TODO: Add othrer pages and their routes here
@@ -37,6 +39,8 @@ export default function App() {
               <Route path="/alerts"             element={<AlertsPage />}     />
               <Route path="/inventory"          element={<InventoryPage />}  />
               <Route path="/zones"        element={<ZonesPage />} />
+              <Route path="/low-stock" element={<LowStockPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
               <Route path="/zones/create" element={<CreateZonePage />} />
 
               {/* Admin-only routes */}
