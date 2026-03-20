@@ -134,7 +134,7 @@ export function AppLayout() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col lg:ml-[220px] w-full lg:w-[calc(100vw-220px)]">
+      <main className="flex-1 flex flex-col lg:ml-[220px] min-w-0">
 
         {/* Header */}
         <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10 gap-3">
@@ -171,7 +171,9 @@ export function AppLayout() {
       </main>
 
       {/* Live feed sidebar */}
-      <LiveFeed user={user} />
+      <div className="hidden xl:block">
+        <LiveFeed user={user} />
+      </div>
 
     </div>
   );
