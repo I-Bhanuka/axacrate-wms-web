@@ -8,15 +8,15 @@ import { LiveFeed } from "./LiveFeed";
 
 {/* The Navigation Items */ }
 const NAV_ITEMS = [
-  { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/> },
-  { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/> },
-  { to: "/createItem", label: "Create Item", icon: <Plus size={18}/> },
-  { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/> },
-  { to: "/zones", label: "Zones", icon: <Grid size={18}/> },
-  { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/> },
-  { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> },
-  { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> },
-  { to: "/users", label: "User Management", icon: <Users size={18}/>, adminOnly: true },
+  { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/createItem", label: "Create Item", icon: <Plus size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/zones", label: "Zones", icon: <Grid size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/>, roles: ["ADMIN", "MANAGER"] },
+  { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"]},
+  { to: "/users", label: "User Management", icon: <Users size={18}/>, roles: ["ADMIN"] },
 ];
 
 export function AppLayout() {
@@ -24,7 +24,7 @@ export function AppLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isAdmin = user?.role === "ADMIN";
+  const isAdmin = user?.role === "ADMIN"; {/* true if the user is an admin, false if not */}
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
   const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
@@ -87,7 +87,15 @@ export function AppLayout() {
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 py-2 pt-3">
             Navigation
           </div>
-          {NAV_ITEMS.filter(item => !item.adminOnly || isAdmin).map(item  => (
+
+          {/*
+          Items with no restriction → visible to all
+          Items with restriction → visible only if allowed
+          The condition has to return true for the item to be visible.
+          */}
+          {NAV_ITEMS.filter(item => 
+            !item.roles || item.roles.includes(user?.role)          
+          ).map(item  => (
             <NavLink
               key={item.to}
               to={item.to}
