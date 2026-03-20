@@ -67,6 +67,25 @@ export function CreateZonePage() {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
+  // ── Validate form before submitting ───────────────────────────────────────
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.name.trim())          newErrors.name          = "Zone name is required";
+    if (!form.zoneType)             newErrors.zoneType      = "Zone type is required";
+    if (!form.warehouseName.trim()) newErrors.warehouseName = "Warehouse name is required";
+    if (!form.capacity)             newErrors.capacity      = "Capacity is required";
+    else if (Number(form.capacity) <= 0) newErrors.capacity = "Capacity must be greater than 0";
+    if (!form.status)               newErrors.status        = "Status is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // ── Submit handler ─────────────────────────────────────────────────────────
+  const handleSubmit = () => {
+    if (!validate()) return;
+    createMutation.mutate();
+  };
+
   return (
     <>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
