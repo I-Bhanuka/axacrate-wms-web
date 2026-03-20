@@ -124,7 +124,7 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select zone type" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
               {ZONE_TYPES.map((t) => (
                 <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
               ))}
@@ -140,7 +140,7 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
             <SelectValue placeholder="Select warehouse" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
             {warehouses.map((w: Warehouse) => (
                 <SelectItem key={w.id} value={w.name}>{w.name}</SelectItem>
             ))}
@@ -157,7 +157,8 @@ export function CreateZonePage() {
             placeholder="e.g. 100"
             value={form.capacity}
             onChange={(e) => handleChange("capacity", e.target.value)}
-          />
+            className="[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
           {errors.capacity && <p className="mt-1 text-xs text-red-400">{errors.capacity}</p>}
         </div>
 
@@ -168,7 +169,7 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
               {ZONE_STATUSES.map((s) => (
                 <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
               ))}
