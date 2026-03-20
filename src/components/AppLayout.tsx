@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { api } from "../api/http";
-import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users } from "lucide-react";
+import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users ,FileText } from "lucide-react";
 import logo from "../assets/logo.png";
 import { LiveFeed } from "./LiveFeed";
 
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"] },
   { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"]},
   { to: "/users", label: "User Management", icon: <Users size={18}/>, roles: ["ADMIN"] },
+  { to: "/reports", label: "Reports", icon: <FileText size={18} /> },
 ];
 
 export function AppLayout() {
