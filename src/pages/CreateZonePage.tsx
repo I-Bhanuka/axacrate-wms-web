@@ -1,17 +1,19 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// CREATE ZONE PAGE — Assigned to: Member 2 - Aatif
-//
-// TODO: Build the create zone form and handle submission.
+// CREATE ZONE PAGE — Assigned to: Member 3 - Aatif
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { ArrowLeft } from "lucide-react";
+import type { Warehouse } from "../types";
 
 // ── Zone type and status options (matching backend enums) ──────────────────
 const ZONE_TYPES = [
@@ -30,6 +32,12 @@ const ZONE_STATUSES = [
 export function CreateZonePage() {
   const navigate = useNavigate();
   const qc       = useQueryClient();
+
+  // ── Fetch warehouses for dropdown ─────────────────────────────────────────
+  const { data: warehouses = [] } = useQuery({
+    queryKey: ["warehouses"],
+    queryFn:  api.getWarehouses,
+  });
 
   // ── Form state ─────────────────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -54,7 +62,6 @@ export function CreateZonePage() {
         status:        form.status,
       }),
     onSuccess: () => {
-      // Invalidate zones cache so ZonesPage refreshes
       qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
       navigate("/zones");
     },
@@ -63,7 +70,6 @@ export function CreateZonePage() {
   // ── Handle input changes ───────────────────────────────────────────────────
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    // Clear error for field when user starts typing
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
@@ -91,7 +97,7 @@ export function CreateZonePage() {
       {/* ── Page header ─────────────────────────────────────────────────────── */}
       <PageHeader title="Create Zone" subtitle="Add a new zone to the warehouse">
         <Button variant="outline" size="sm" onClick={() => navigate("/zones")}>
-          <ArrowLeft size={16} style={{ marginRight: 6 }} />
+          <ArrowLeft size={16} className="mr-1.5" />
           Back
         </Button>
       </PageHeader>
@@ -101,71 +107,73 @@ export function CreateZonePage() {
 
         {/* Zone Name */}
         <div className="mb-4">
-          <label className="text-xs text-gray-400 mb-1.5 block">Zone Name</label>
-          <input
+          <Label className="mb-1.5 block">Zone Name</Label>
+          <Input
             type="text"
             placeholder="e.g. StorageZone1"
             value={form.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-white/20"
           />
           {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
         </div>
 
         {/* Zone Type dropdown */}
         <div className="mb-4">
-          <label className="text-xs text-gray-400 mb-1.5 block">Zone Type</label>
-          <select
-            value={form.zoneType}
-            onChange={(e) => handleChange("zoneType", e.target.value)}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
-          >
-            <option value="" disabled>Select zone type</option>
-            {ZONE_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>{t.label}</option>
-            ))}
-          </select>
+          <Label className="mb-1.5 block">Zone Type</Label>
+          <Select value={form.zoneType} onValueChange={(val) => handleChange("zoneType", val)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select zone type" />
+            </SelectTrigger>
+            <SelectContent className="bg-neutral-900 border border-border">
+              {ZONE_TYPES.map((t) => (
+                <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {errors.zoneType && <p className="mt-1 text-xs text-red-400">{errors.zoneType}</p>}
         </div>
 
-        {/* Warehouse Name */}
+        {/* Warehouse Name dropdown */}
         <div className="mb-4">
-          <label className="text-xs text-gray-400 mb-1.5 block">Warehouse Name</label>
-          <input
-            type="text"
-            placeholder="e.g. WarehouseA"
-            value={form.warehouseName}
-            onChange={(e) => handleChange("warehouseName", e.target.value)}
-            className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-white/20"
-          />
-          {errors.warehouseName && <p className="mt-1 text-xs text-red-400">{errors.warehouseName}</p>}
+        <Label className="mb-1.5 block">Warehouse</Label>
+        <Select value={form.warehouseName} onValueChange={(val) => handleChange("warehouseName", val)}>
+            <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select warehouse" />
+            </SelectTrigger>
+            <SelectContent className="bg-neutral-900 border border-border">
+            {warehouses.map((w: Warehouse) => (
+                <SelectItem key={w.id} value={w.name}>{w.name}</SelectItem>
+            ))}
+            </SelectContent>
+        </Select>
+        {errors.warehouseName && <p className="mt-1 text-xs text-red-400">{errors.warehouseName}</p>}
         </div>
 
         {/* Capacity */}
         <div className="mb-4">
-          <label className="text-xs text-gray-400 mb-1.5 block">Capacity</label>
-          <input
+          <Label className="mb-1.5 block">Capacity</Label>
+          <Input
             type="number"
             placeholder="e.g. 100"
             value={form.capacity}
             onChange={(e) => handleChange("capacity", e.target.value)}
-            className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-white/20"
           />
           {errors.capacity && <p className="mt-1 text-xs text-red-400">{errors.capacity}</p>}
         </div>
 
         {/* Status dropdown */}
         <div className="mb-6">
-          <label className="text-xs text-gray-400 mb-1.5 block">Status</label>
-          <select
-            value={form.status}
-            onChange={(e) => handleChange("status", e.target.value)}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
-          >
-            {ZONE_STATUSES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+          <Label className="mb-1.5 block">Status</Label>
+          <Select value={form.status} onValueChange={(val) => handleChange("status", val)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent className="bg-neutral-900 border border-border">
+              {ZONE_STATUSES.map((s) => (
+                <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {errors.status && <p className="mt-1 text-xs text-red-400">{errors.status}</p>}
         </div>
 
@@ -177,13 +185,13 @@ export function CreateZonePage() {
         )}
 
         {/* Submit button */}
-        <button
+        <Button
+          className="w-full"
           onClick={handleSubmit}
           disabled={createMutation.isPending}
-          className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-500 transition disabled:opacity-50"
         >
           {createMutation.isPending ? "Creating..." : "Create Zone"}
-        </button>
+        </Button>
       </div>
     </>
   );
