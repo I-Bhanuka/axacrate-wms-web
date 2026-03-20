@@ -80,7 +80,7 @@ export const api = {
     const res = await http.get<ApiResponse<DashboardSummary>>("/api/inventory/dashboard");
     return res.data.data;
   },
-  
+
   getDashboardReport: async (
     data: DashboardReportRequest
   ): Promise<DashboardReport> => {
@@ -117,7 +117,7 @@ export const api = {
       return res.data.data;
     }
     const params: Record<string, unknown> = { page, size, sort };
-    if (zoneId)       params.zoneId      = zoneId;
+    if (zoneId) params.zoneId = zoneId;
     if (minQuantity !== "") params.minQuantity = minQuantity;
     if (maxQuantity !== "") params.maxQuantity = maxQuantity;
     const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory", { params });
@@ -140,14 +140,14 @@ export const api = {
   },
 
 
-    deleteItem: async (sku: string): Promise<void> => {
+  deleteItem: async (sku: string): Promise<void> => {
     await http.delete(`/api/inventory/${sku}`);
   },
 
 
 
 
-  
+
 
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
   // TODO: getZone by id, getWarehouses for dropdown
@@ -185,7 +185,7 @@ export const api = {
     );
     return res.data.data;
   },
-  
+
   // Enabling a zone by it's warehouse name and zone name
   enableZone: async (warehouseName: string, name: string): Promise<Zone> => {
     const res = await http.patch<ApiResponse<Zone>>(
@@ -196,28 +196,28 @@ export const api = {
 
   // ── RFID (M2 - Sheshan) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
-    pollRfid: async (): Promise<RfidScanResponse | null> => {
+  pollRfid: async (): Promise<RfidScanResponse | null> => {
     const res = await http.get<ApiResponse<RfidScanResponse | null>>("/api/rfid/write-latest");
     return res.data.data;
   },
 
 
   // ── Movement Log (M6 - Ahintha) ─────────────────────────────────────────────────────
-    getMovements: async (limit = 20): Promise<MovementLog[]> => {
-        const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/recent", {
-          params: { limit },
-        });
-        return res.data.data;
-      },
+  getMovements: async (limit = 20): Promise<MovementLog[]> => {
+    const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/recent", {
+      params: { limit },
+    });
+    return res.data.data;
+  },
 
-    getRecentActitvity: async (limit = 20): Promise<MovementLog[]> => {
-      const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/activity", {
-        params: { limit },
-      });
-      return res.data.data;
-    },
-      // ── Low Stock Alerts (M6 - Ahintha) ─────────────────────────────────────────────────────
-    getLowStockItems: async (): Promise<LowStockItem[]> => {
+  getRecentActitvity: async (limit = 20): Promise<MovementLog[]> => {
+    const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/activity", {
+      params: { limit },
+    });
+    return res.data.data;
+  },
+  // ── Low Stock Alerts (M6 - Ahintha) ─────────────────────────────────────────────────────
+  getLowStockItems: async (): Promise<LowStockItem[]> => {
     const res = await http.get<ApiResponse<LowStockItem[]>>("/api/inventory/low-stock");
     return res.data.data;
   },
@@ -281,9 +281,9 @@ export const api = {
   deleteUser: async (id: string): Promise<void> => {
     await http.delete(`/api/admin/users/${id}`);
   },
-    
 
-  
+
+
   // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
 
   // Getting all warehouses for the dropdown
@@ -292,7 +292,7 @@ export const api = {
     return res.data.data ? [res.data.data] : [];
   },
 
-  
+
 };
 
 

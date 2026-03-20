@@ -59,7 +59,7 @@ export interface AuthUser {
   token: string;
   username: string;
   role: string;
-  id : string;
+  id: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
