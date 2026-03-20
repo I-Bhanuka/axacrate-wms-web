@@ -6,6 +6,9 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { PageHeader } from "../components/ui/PageHeader";
+import { Button } from "../components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export function CreateZonePage() {
   const navigate = useNavigate();
@@ -19,5 +22,17 @@ export function CreateZonePage() {
     status:        "ACTIVE", // default to ACTIVE
   });
 
-  return <div>Create Zone Page</div>;
+  return (
+    <>
+      {/* ── Page header ─────────────────────────────────────────────────────── */}
+      <PageHeader title="Create Zone" subtitle="Add a new zone to the warehouse">
+        <Button variant="outline" size="sm" onClick={() => navigate("/zones")}>
+          <ArrowLeft size={16} style={{ marginRight: 6 }} />
+          Back
+        </Button>
+      </PageHeader>
+    </>
+  );
+
+  <div>Create Zone Page</div>;
 }
