@@ -18,6 +18,7 @@ import type {
   LowStockItem,
   DashboardReport,
   DashboardReportRequest,
+  Warehouse
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
 
@@ -251,7 +252,12 @@ export const api = {
 
   
   // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
-  // TODO: getWarehouses for dropdown
+
+  // Getting all warehouses for the dropdown
+  getWarehouses: async (): Promise<Warehouse[]> => {
+    const res = await http.get<ApiResponse<Warehouse>>("/api/warehouses/all");
+    return res.data.data ? [res.data.data] : [];
+  },
 
   
 };
