@@ -10,6 +10,20 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
+// ── Zone type and status options (matching backend enums) ──────────────────
+const ZONE_TYPES = [
+  { value: "UNLOADING_ZONE", label: "Unloading Zone" },
+  { value: "WRITER_ZONE",    label: "Writer Zone"    },
+  { value: "QC_ZONE",        label: "QC Zone"        },
+  { value: "STORAGE_ZONE",   label: "Storage Zone"   },
+  { value: "DISPATCH_ZONE",  label: "Dispatch Zone"  },
+];
+
+const ZONE_STATUSES = [
+  { value: "ACTIVE",   label: "Active"   },
+  { value: "INACTIVE", label: "Inactive" },
+];
+
 export function CreateZonePage() {
   const navigate = useNavigate();
 
@@ -33,6 +47,4 @@ export function CreateZonePage() {
       </PageHeader>
     </>
   );
-
-  <div>Create Zone Page</div>;
 }
