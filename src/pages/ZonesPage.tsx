@@ -12,7 +12,7 @@ import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
-import { Plus, Search, Warehouse } from "lucide-react";
+import { Plus, Search, Warehouse, Power, PowerOff, Pencil } from "lucide-react";
 import type { Zone } from "../types";
 import { ZoneBadge } from "../components/ui/ZoneBadge";
 
@@ -210,13 +210,53 @@ export function ZonesPage() {
 
                   {/* Actions */}
                   <td className="px-3 py-2">
+                    <div className="flex items-center justify-end gap-2">
 
+                      {/* Edit button */}
+                      <button
+                        onClick={() => openEdit(zone)}
+                        className="flex items-center gap-1 rounded-md border border-border bg-white/5 px-2.5 py-1 text-xs text-gray-300 hover:bg-white/10 transition"
+                      >
+                        <Pencil size={11} />
+                        Edit
+                      </button>
+
+                      {/* Enable / Disable button */}
+                      {zone.status === "ACTIVE" ? (
+                        <button
+                          onClick={() => disableMutation.mutate({ warehouseName: zone.warehouseName, name: zone.name })}
+                          disabled={disableMutation.isPending}
+                          className="flex items-center gap-1 rounded-md border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-xs text-red-400 hover:bg-red-500/20 transition disabled:opacity-50"
+                        >
+                          <PowerOff size={11} />
+                          Disable
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => enableMutation.mutate({ warehouseName: zone.warehouseName, name: zone.name })}
+                          disabled={enableMutation.isPending}
+                          className="flex items-center gap-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs text-emerald-400 hover:bg-emerald-500/20 transition disabled:opacity-50"
+                        >
+                          <Power size={11} />
+                          Enable
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+
+        {/* Row count footer */}
+        {!isLoading && filtered.length > 0 && (
+          <div className="border-t border-border px-4 py-2">
+            <p className="text-[11px] text-white font-medium">
+              Showing {filtered.length} of {zones.length} zones
+            </p>
+          </div>
+        )}
       </div>
     </>
   );
