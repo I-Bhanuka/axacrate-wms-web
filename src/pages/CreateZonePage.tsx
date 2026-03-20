@@ -5,7 +5,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/http";
+import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -26,6 +29,7 @@ const ZONE_STATUSES = [
 
 export function CreateZonePage() {
   const navigate = useNavigate();
+  const qc       = useQueryClient();
 
   // ── Form state ─────────────────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -39,11 +43,47 @@ export function CreateZonePage() {
   // ── Field error state ──────────────────────────────────────────────────────
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // ── Create zone mutation ───────────────────────────────────────────────────
+  const createMutation = useMutation({
+    mutationFn: () =>
+      api.createZone({
+        name:          form.name.trim(),
+        zoneType:      form.zoneType,
+        warehouseName: form.warehouseName.trim(),
+        capacity:      Number(form.capacity),
+        status:        form.status,
+      }),
+    onSuccess: () => {
+      // Invalidate zones cache so ZonesPage refreshes
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+      navigate("/zones");
+    },
+  });
+
   // ── Handle input changes ───────────────────────────────────────────────────
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     // Clear error for field when user starts typing
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  // ── Validate form before submitting ───────────────────────────────────────
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.name.trim())          newErrors.name          = "Zone name is required";
+    if (!form.zoneType)             newErrors.zoneType      = "Zone type is required";
+    if (!form.warehouseName.trim()) newErrors.warehouseName = "Warehouse name is required";
+    if (!form.capacity)             newErrors.capacity      = "Capacity is required";
+    else if (Number(form.capacity) <= 0) newErrors.capacity = "Capacity must be greater than 0";
+    if (!form.status)               newErrors.status        = "Status is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // ── Submit handler ─────────────────────────────────────────────────────────
+  const handleSubmit = () => {
+    if (!validate()) return;
+    createMutation.mutate();
   };
 
   return (
@@ -128,6 +168,22 @@ export function CreateZonePage() {
           </select>
           {errors.status && <p className="mt-1 text-xs text-red-400">{errors.status}</p>}
         </div>
+
+        {/* API error message */}
+        {createMutation.isError && (
+          <p className="mb-4 text-xs text-red-400 text-center">
+            Failed to create zone. Please check your inputs and try again.
+          </p>
+        )}
+
+        {/* Submit button */}
+        <button
+          onClick={handleSubmit}
+          disabled={createMutation.isPending}
+          className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-500 transition disabled:opacity-50"
+        >
+          {createMutation.isPending ? "Creating..." : "Create Zone"}
+        </button>
       </div>
     </>
   );
