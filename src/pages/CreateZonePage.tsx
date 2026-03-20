@@ -55,6 +55,80 @@ export function CreateZonePage() {
           Back
         </Button>
       </PageHeader>
+
+      {/* ── Form card ───────────────────────────────────────────────────────── */}
+      <div className="max-w-lg rounded-xl border border-border bg-card p-6">
+
+        {/* Zone Name */}
+        <div className="mb-4">
+          <label className="text-xs text-gray-400 mb-1.5 block">Zone Name</label>
+          <input
+            type="text"
+            placeholder="e.g. StorageZone1"
+            value={form.name}
+            onChange={(e) => handleChange("name", e.target.value)}
+            className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-white/20"
+          />
+          {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
+        </div>
+
+        {/* Zone Type dropdown */}
+        <div className="mb-4">
+          <label className="text-xs text-gray-400 mb-1.5 block">Zone Type</label>
+          <select
+            value={form.zoneType}
+            onChange={(e) => handleChange("zoneType", e.target.value)}
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+          >
+            <option value="" disabled>Select zone type</option>
+            {ZONE_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+          {errors.zoneType && <p className="mt-1 text-xs text-red-400">{errors.zoneType}</p>}
+        </div>
+
+        {/* Warehouse Name */}
+        <div className="mb-4">
+          <label className="text-xs text-gray-400 mb-1.5 block">Warehouse Name</label>
+          <input
+            type="text"
+            placeholder="e.g. WarehouseA"
+            value={form.warehouseName}
+            onChange={(e) => handleChange("warehouseName", e.target.value)}
+            className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-white/20"
+          />
+          {errors.warehouseName && <p className="mt-1 text-xs text-red-400">{errors.warehouseName}</p>}
+        </div>
+
+        {/* Capacity */}
+        <div className="mb-4">
+          <label className="text-xs text-gray-400 mb-1.5 block">Capacity</label>
+          <input
+            type="number"
+            placeholder="e.g. 100"
+            value={form.capacity}
+            onChange={(e) => handleChange("capacity", e.target.value)}
+            className="w-full rounded-lg border border-border bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-white/20"
+          />
+          {errors.capacity && <p className="mt-1 text-xs text-red-400">{errors.capacity}</p>}
+        </div>
+
+        {/* Status dropdown */}
+        <div className="mb-6">
+          <label className="text-xs text-gray-400 mb-1.5 block">Status</label>
+          <select
+            value={form.status}
+            onChange={(e) => handleChange("status", e.target.value)}
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+          >
+            {ZONE_STATUSES.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+          {errors.status && <p className="mt-1 text-xs text-red-400">{errors.status}</p>}
+        </div>
+      </div>
     </>
   );
 }
