@@ -137,7 +137,11 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select zone type" />
             </SelectTrigger>
+<<<<<<< HEAD
             <SelectContent className="bg-[#131720] border border-border" position="popper">
+=======
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
+>>>>>>> 6e2f6fe (Add modifications to the drop down lists in CreateZonePage)
               {ZONE_TYPES.map((t) => (
                 <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
               ))}
@@ -153,7 +157,11 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
             <SelectValue placeholder="Select warehouse" />
             </SelectTrigger>
+<<<<<<< HEAD
             <SelectContent className="bg-[#131720] border border-border" position="popper">
+=======
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
+>>>>>>> 6e2f6fe (Add modifications to the drop down lists in CreateZonePage)
             {warehouses.map((w: Warehouse) => (
                 <SelectItem key={w.id} value={w.name}>{w.name}</SelectItem>
             ))}
@@ -182,7 +190,11 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
+<<<<<<< HEAD
             <SelectContent className="bg-[#131720] border border-border" position="popper">
+=======
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
+>>>>>>> 6e2f6fe (Add modifications to the drop down lists in CreateZonePage)
               {ZONE_STATUSES.map((s) => (
                 <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
               ))}
