@@ -22,7 +22,7 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
         {/* poll is an async function that fetches the recent movements from the API and updates the feed */}
         const poll = async () => {
         try {
-            const movements: MovementLog[] = await api.getMovements(20);
+            const movements: MovementLog[] = await api.getRecentActitvity(20);
             if (!movements?.length) return;
 
 
