@@ -105,48 +105,49 @@ export function ZonesPage() {
         </Button>
       </PageHeader>
 
-      {/* ── Warehouse filter and search bar ─────────────────────────────────── */}
-      <div className="flex gap-3 mb-5">
-
-        {/* Warehouse dropdown */}
-        <Select value={selectedWarehouse} onValueChange={setSelectedWarehouse}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All Warehouses" />
-          </SelectTrigger>
-          <SelectContent className="bg-neutral-900 border border-border">
-            {warehouses.map((w) => (
-              <SelectItem key={w} value={w}>
-                {w === "ALL" ? "All Warehouses" : w}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* ── Search bar ──────────────────────────────────────────────────────── */}
-        <div className="relative flex-1">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          <Input
-            type="text"
-            placeholder="Search by zone name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-      </div>
-
-      {/* ── Table ───────────────────────────────────────────────────────────── */}
+      {/* ── Table with filter bar ───────────────────────────────────────────── */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
+
+        {/* Filter bar */}
+        <div className="p-4 border-b border-border flex gap-3 items-center">
+
+          {/* Warehouse dropdown */}
+          <Select value={selectedWarehouse} onValueChange={setSelectedWarehouse}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All Warehouses" />
+            </SelectTrigger>
+            <SelectContent className="bg-neutral-900 border border-border">
+              {warehouses.map((w) => (
+                <SelectItem key={w} value={w}>
+                  {w === "ALL" ? "All Warehouses" : w}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Search bar */}
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <Input
+              type="text"
+              placeholder="Search by zone name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center text-white">Zone Name</TableHead>
-              <TableHead className="text-center text-white">Warehouse</TableHead>
-              <TableHead className="text-center text-white">Type</TableHead>
-              <TableHead className="text-center text-white">Capacity</TableHead>
-              <TableHead className="text-center text-white">Status</TableHead>
-              <TableHead className="text-center text-white">Hardware</TableHead>
-              <TableHead className="text-center text-white">Actions</TableHead>
+              <TableHead className="text-center text-white">ZONE NAME</TableHead>
+              <TableHead className="text-center text-white">WAREHOUSE</TableHead>
+              <TableHead className="text-center text-white">TYPE</TableHead>
+              <TableHead className="text-center text-white">CAPACITY</TableHead>
+              <TableHead className="text-center text-white">STATUS</TableHead>
+              <TableHead className="text-center text-white">HARDWARE</TableHead>
+              <TableHead className="text-center text-white">ACTIONS</TableHead>
             </TableRow>
           </TableHeader>
 
