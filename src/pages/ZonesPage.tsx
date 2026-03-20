@@ -303,6 +303,13 @@ export function ZonesPage() {
                 {updateMutation.isPending ? "Saving..." : "Save Changes"}
               </button>
             </div>
+
+            {/* Error message */}
+            {updateMutation.isError && (
+              <p className="mt-3 text-xs text-red-400 text-center">
+                Failed to update zone. Please try again.
+              </p>
+            )}
           </div>
         </div>
       )}
