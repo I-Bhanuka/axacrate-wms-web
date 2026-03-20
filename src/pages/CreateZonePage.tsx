@@ -5,7 +5,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/http";
+import { QUERY_KEYS } from "../lib/queryClient";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -26,6 +29,7 @@ const ZONE_STATUSES = [
 
 export function CreateZonePage() {
   const navigate = useNavigate();
+  const qc       = useQueryClient();
 
   // ── Form state ─────────────────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -38,6 +42,23 @@ export function CreateZonePage() {
 
   // ── Field error state ──────────────────────────────────────────────────────
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // ── Create zone mutation ───────────────────────────────────────────────────
+  const createMutation = useMutation({
+    mutationFn: () =>
+      api.createZone({
+        name:          form.name.trim(),
+        zoneType:      form.zoneType,
+        warehouseName: form.warehouseName.trim(),
+        capacity:      Number(form.capacity),
+        status:        form.status,
+      }),
+    onSuccess: () => {
+      // Invalidate zones cache so ZonesPage refreshes
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+      navigate("/zones");
+    },
+  });
 
   // ── Handle input changes ───────────────────────────────────────────────────
   const handleChange = (field: string, value: string) => {
