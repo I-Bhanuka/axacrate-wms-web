@@ -59,6 +59,26 @@ export function ZonesPage() {
     z.name.toLowerCase().includes(search.toLowerCase()) ||
     z.warehouseName.toLowerCase().includes(search.toLowerCase())
   );
+
+  // ── Open edit modal ────────────────────────────────────────────────────────
+  const openEdit = (zone: Zone) => {
+    setEditZone(zone);
+    setEditName(zone.name);
+    setEditCap(String(zone.capacity));
+  };
+
+  // ── Submit edit ────────────────────────────────────────────────────────────
+  const submitEdit = () => {
+    if (!editZone) return;
+    updateMutation.mutate({
+      warehouseName: editZone.warehouseName,
+      name:          editZone.name,
+      data: {
+        name:     editName !== editZone.name            ? editName          : undefined,
+        capacity: Number(editCap) !== editZone.capacity ? Number(editCap)   : undefined,
+      },
+    });
+  };
   
   // ── Status badge style ─────────────────────────────────────────────────────
   const statusBadge = (status: string) =>
