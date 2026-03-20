@@ -70,7 +70,6 @@ export interface AuthUser {
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: ZoneUpdateRequest
 
 // Represents a zone as returned by the backend
 export interface Zone {
@@ -291,6 +290,15 @@ export interface GeofenceRule {
   label: string;  // e.g. "Standard inbound"
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// WAREHOUSE
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Represents a warehouse as returned by the backend
+export interface Warehouse {
+  id: string;
+  name: string;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GEOFENCING  (M5 - Daniru)
