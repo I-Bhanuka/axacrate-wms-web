@@ -14,7 +14,10 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Skeleton } from "../components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
+<<<<<<< HEAD
 import { toast } from "sonner";
+=======
+>>>>>>> d02f79d (Creating new file EditZonePage.tsx)
 
 // ── Status options matching backend enums ──────────────────────────────────
 const ZONE_STATUSES = [
@@ -66,6 +69,7 @@ export function EditZonePage() {
         status:   form.status !== zone?.status       ? form.status         : undefined,
       }),
     onSuccess: () => {
+<<<<<<< HEAD
             // Playing a subtle notification sound
             const ctx = new AudioContext();
             const oscillator = ctx.createOscillator();
@@ -81,6 +85,11 @@ export function EditZonePage() {
             toast.success("Zone edited successfully!");
             navigate("/zones");
         },
+=======
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+      navigate("/zones");
+    },
+>>>>>>> d02f79d (Creating new file EditZonePage.tsx)
   });
 
   // ── Handle input changes ───────────────────────────────────────────────────
