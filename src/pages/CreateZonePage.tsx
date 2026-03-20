@@ -36,6 +36,16 @@ export function CreateZonePage() {
     status:        "ACTIVE", // default to ACTIVE
   });
 
+  // ── Field error state ──────────────────────────────────────────────────────
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // ── Handle input changes ───────────────────────────────────────────────────
+  const handleChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    // Clear error for field when user starts typing
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
   return (
     <>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
