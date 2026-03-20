@@ -170,7 +170,7 @@ export function ZonesPage() {
                 >
                   {/* Zone name */}
                   <td className="px-3 py-2">
-                    <ZoneBadge zone={zone.name} />
+                    <ZoneBadge zone={zone.name} className="!text-orange-400 !bg-orange-500/10 !border-orange-500/20" />
                   </td>
 
                   {/* Warehouse */}
