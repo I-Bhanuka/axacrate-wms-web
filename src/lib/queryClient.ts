@@ -47,4 +47,7 @@ export const QUERY_KEYS = {
     filtered:   (status: string) => ["alerts", status]   as const,
     unresolved: ["alerts", "unresolved"]                 as const,
   },
+  geofence: {
+    rules: ["geofence", "rules"] as const,
+  },
 };

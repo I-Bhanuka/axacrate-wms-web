@@ -70,7 +70,6 @@ export interface AuthUser {
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: ZoneUpdateRequest
 
 // Represents a zone as returned by the backend
 export interface Zone {
@@ -132,6 +131,27 @@ export interface InventoryItemCreateRequest {
 }
 
 
+export interface PageResponse<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+}
+
+
+export interface InventoryFilters {
+  page?: number;
+  size?: number;
+  sort?: string;
+  zoneId?: string;
+  minQuantity?: number | string;
+  maxQuantity?: number | string;
+  query?: string;
+}
+
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // RFID  (M1 - Bhanuka)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -163,6 +183,39 @@ export interface MovementLog {
   itemSku: string | null;
   itemName: string | null;
 }
+//Low stock item (used in Low Stock Alerts page)
+
+export interface LowStockItem {
+  id: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  reorderLevel: number;
+  zoneName?: string | null;
+}
+
+export interface LowStockReportItem {
+  sku: string;
+  name: string;
+  quantity: number;
+  reorderThreshold: number;
+  zoneName: string | null;
+}
+export interface DashboardReportRequest {
+  recentMovementLimit: number;
+  includeLowStock: boolean;
+  includeRecentMovements: boolean;
+}
+
+export interface DashboardReport {
+  generatedAt: string;
+  totalItems: number;
+  totalQuantity: number;
+  lowStockCount: number;
+  activeZones: number;
+  lowStockItems: LowStockReportItem[];
+  recentMovements: MovementLog[];
+}
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -189,8 +242,100 @@ export interface CreateAlertRequest {
   zoneId?: string | null;
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User management (M1 - Bhanuka)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface UserItem {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  role: string;
+}
+
+export interface CreateUserForm {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  password: string;
+  role: string;
+}
+
+export interface UserResponseDTO {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  role: string;       // "ADMIN" | "MANAGER" | "WORKER"
+}
+
+export interface CreateUserRequest {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  username: string;
+  password: string;
+  role: string;
+}
+
+// Geofence
+export interface GeofenceRule {
+  from: string;   // e.g. "UNLOADING_ZONE"
+  to: string;     // e.g. "WRITER_ZONE"
+  label: string;  // e.g. "Standard inbound"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WAREHOUSE
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Represents a warehouse as returned by the backend
+export interface Warehouse {
+  id: string;
+  name: string;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // GEOFENCING  (M5 - Daniru)
 // ─────────────────────────────────────────────────────────────────────────────
 // TOOD: GeofencingRule
+// ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface WorkflowRule {
+  from: string;
+  to: string;
+  label: string;
+}
+
+// Re-uses the existing ZoneResponseDTO shape from the backend
+export interface ZoneStatus {
+  id: string;
+  name: string;
+  zoneType: string;
+  capacity: number;
+  currentItemCount: number;
+  status: string;
+  hasHardware: boolean;
+  hardwareName: string | null;
+  hardwareType: string | null;
+  hardwareStatus: string | null;
+}
+
+// Re-uses AlertResponseDTO
+export interface AlertItem {
+  id: string;
+  alertType: string;
+  severity: string;
+  alertStatus: string;
+  message: string | null;
+  zoneId: string | null;
+  zoneName: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+  resolvedByUsername: string | null;
+}
