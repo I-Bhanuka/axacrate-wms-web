@@ -112,6 +112,11 @@ export const api = {
     return res.data.data;
   },
 
+  getItem: async (id: string): Promise<InventoryItem> => {
+    const res = await http.get<ApiResponse<InventoryItem>>(`/api/inventory/${id}`);
+    return res.data.data;
+  },
+
 
     deleteItem: async (sku: string): Promise<void> => {
     await http.delete(`/api/inventory/${sku}`);
