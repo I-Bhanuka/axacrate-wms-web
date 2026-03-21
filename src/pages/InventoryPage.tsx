@@ -88,7 +88,8 @@ export function InventoryPage() {
         <>
             {/* Delete confirmation modal */}
             {deleteTarget && (
-                <ConfirmModal
+                <ConfirmModal 
+                    className="bg-neutral-900 border border-border"
                     title="Delete Item"
                     body={`Delete "${deleteTarget.sku} — ${deleteTarget.name}"? This cannot be undone.`}
                     onConfirm={() => deleteMutation.mutate(deleteTarget.sku)}
