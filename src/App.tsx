@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminRoute } from "./components/AdminRoute";  
+import { Toaster } from "sonner";
 
 // Pages
 import { LoginPage }      from "./pages/LoginPage";
@@ -60,6 +61,17 @@ export default function App() {
 
         </Routes>
       </BrowserRouter>
+      <Toaster
+        richColors
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#131720",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "#ffffff",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }
