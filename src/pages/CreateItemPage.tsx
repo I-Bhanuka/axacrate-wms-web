@@ -82,9 +82,9 @@ export function CreateItemPage() {
             oscillator.stop(ctx.currentTime + 0.3);
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.inventory.all });
             setCreated(true);
-            toast.success("Item created successfully!"),{
+            toast.success("Item created successfully!",{
                 position: "top-center",
-            };
+            });
         },
     }); // This sets up a mutation using React Query to handle the API call for creating a new inventory item. 
 
