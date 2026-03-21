@@ -46,7 +46,7 @@ export default function App() {
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/zones/create" element={<CreateZonePage />} />
               <Route path="/zones/edit/:warehouseName/:name" element={<EditZonePage />} />
-              <Route path="/items/:id" element={<ViewItemPage />} />
+              <Route path="/inventory/:id" element={<ViewItemPage />} />
 
               {/* Admin-only routes */}
               {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
