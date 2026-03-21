@@ -180,7 +180,7 @@ export function InventoryPage() {
                                     <td className="px-4 py-3">
                                         <div className="flex gap-1.5">
                                             <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.id}`)}>View</Button>
-                                            <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.sku}/edit`)}>Edit</Button>
+                                            <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/edit/${item.sku}`)}>Edit</Button>
                                             <Button size="sm" variant="destructive" onClick={() => setDeleteTarget(item)}>Del</Button>
                                         </div>
                                     </td>
