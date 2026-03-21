@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users, FileText, Radio } from "lucide-react";
@@ -27,6 +27,25 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   {/* State to control the visibility of the live feed sidebar. Initially set to false (hidden) */}
   const [liveFeedOpen, setLiveFeedOpen] = useState(false);
+
+
+  {/* State to track if the screen size is mobile or desktop. This is used to conditionally render certain elements and apply different styles based on the screen size. Initially set to false (not mobile) */}
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024); // mobile = width < 1024px
+    };
+
+    // Check on first render
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Clean up listener on unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
@@ -105,7 +124,8 @@ export function AppLayout() {
           The condition has to return true for the item to be visible.
           */}
           {NAV_ITEMS.filter(item => 
-            !item.roles || item.roles.includes(user?.role ?? "")          
+            !item.roles || item.roles.includes(user?.role ?? "") &&
+            !(isMobile && item.to === "/createItem")  // hide on mobile          
           ).map(item  => (
             <NavLink
               key={item.to}
@@ -191,18 +211,12 @@ export function AppLayout() {
         </div>
       </main>
 
-<<<<<<< HEAD
-      {/* Live feed sidebar */}
-      <LiveFeed user={user} />
-    
-=======
       <LiveFeed
         user={user}
         isOpen={liveFeedOpen}
         onClose={() => setLiveFeedOpen(false)}
       />
           
->>>>>>> 5fd0e54fdafd330f56a3e4d417a94c6f3b8c3ce7
 
     </div>
   );
