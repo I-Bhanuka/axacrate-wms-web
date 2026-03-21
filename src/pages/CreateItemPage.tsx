@@ -71,18 +71,20 @@ export function CreateItemPage() {
         }),
         onSuccess: () => {
             const ctx = new AudioContext();
-            const oscillator = ctx.createOscillator();
-            const gainNode = ctx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            oscillator.frequency.value = 520;
-            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-            oscillator.start(ctx.currentTime);
-            oscillator.stop(ctx.currentTime + 0.3);
+            ctx.resume().then(() => {
+                const oscillator = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                oscillator.frequency.value = 520;
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.3);
+            });
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.inventory.all });
             setCreated(true);
-            toast.success("Item created successfully!",{
+            toast.success("Item created successfully!", {
                 position: "top-center",
             });
         },
