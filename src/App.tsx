@@ -3,11 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-<<<<<<< HEAD
 import { AdminRoute } from "./components/AdminRoute";
-=======
-import { AdminRoute } from "./components/AdminRoute";  
->>>>>>> 9663987 (Adding imports for sonner to the App.tsx file)
 import { Toaster } from "sonner";
 
 // Pages
