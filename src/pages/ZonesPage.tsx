@@ -82,7 +82,7 @@ export function ZonesPage() {
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Warehouses" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border" position="popper">
+            <SelectContent className="bg-[#131720] border border-border" position="popper">
               {warehouses.map((w) => (
                 <SelectItem key={w} value={w}>
                   {w === "ALL" ? "All Warehouses" : w}
