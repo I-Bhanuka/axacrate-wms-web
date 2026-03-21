@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { api } from "../api/http";
 import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users ,FileText } from "lucide-react";
 import logo from "../assets/logo.png";
 import { LiveFeed } from "./LiveFeed";
@@ -25,7 +24,6 @@ export function AppLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isAdmin = user?.role === "ADMIN"; {/* true if the user is an admin, false if not */}
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
   const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
@@ -95,7 +93,7 @@ export function AppLayout() {
           The condition has to return true for the item to be visible.
           */}
           {NAV_ITEMS.filter(item => 
-            !item.roles || item.roles.includes(user?.role)          
+            !item.roles || item.roles.includes(user?.role ?? "")          
           ).map(item  => (
             <NavLink
               key={item.to}
