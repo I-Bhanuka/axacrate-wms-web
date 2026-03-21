@@ -117,6 +117,11 @@ export const api = {
     return res.data.data;
   },
 
+  getItemBySku: async (sku: string): Promise<InventoryItem> => {
+    const res = await http.get<ApiResponse<InventoryItem>>(`/api/inventory/sku/${sku}`);
+    return res.data.data;
+  },
+
 
     deleteItem: async (sku: string): Promise<void> => {
     await http.delete(`/api/inventory/${sku}`);
