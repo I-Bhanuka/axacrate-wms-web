@@ -20,6 +20,7 @@ import LowStockPage from "./pages/LowStockPage";
 import { CreateZonePage }  from "./pages/CreateZonePage";
 import { EditZonePage } from "./pages/EditZonePage";
 import { ViewItemPage } from "./pages/ViewItemPage";
+import { EditItemPage } from "./pages/EditItemPage";
 
 // TODO: Add othrer pages and their routes here
 
@@ -47,6 +48,8 @@ export default function App() {
               <Route path="/zones/create" element={<CreateZonePage />} />
               <Route path="/zones/edit/:warehouseName/:name" element={<EditZonePage />} />
               <Route path="/inventory/:id" element={<ViewItemPage />} />
+              <Route path="/inventory/edit/:sku" element={<EditItemPage />} />
+
 
               {/* Admin-only routes */}
               {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
