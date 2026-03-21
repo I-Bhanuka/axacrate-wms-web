@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../lib/queryClient";
 import { getErrorMessage } from "../lib/utils";
 import { ItemCreateSuccess } from "../components/InventoryComponent/ItemCreateSuccess";
+import { toast } from "sonner";
 
 
 type ScanState = "idle" | "scanning" | "found" | "warning";
@@ -69,9 +70,21 @@ export function CreateItemPage() {
             zoneName: tagData!.currentZone ?? "",
         }),
         onSuccess: () => {
+            const ctx = new AudioContext();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            oscillator.frequency.value = 520;
+            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + 0.3);
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.inventory.all });
             setCreated(true);
-            //etTimeout(() => navigate("/inventory"), 1500);
+            toast.success("Item created successfully!"),{
+                position: "top-center",
+            };
         },
     }); // This sets up a mutation using React Query to handle the API call for creating a new inventory item. 
 
@@ -83,25 +96,25 @@ export function CreateItemPage() {
 
     // Success state return
     if (created) {
-    return (
-        <>
-            <PageHeader title="Create Item" subtitle="Register a new inventory item with RFID tag">
-                <Button variant="outline" onClick={() => navigate("/inventory")}>← Back</Button>
-            </PageHeader>
+        return (
+            <>
+                <PageHeader title="Create Item" subtitle="Register a new inventory item with RFID tag">
+                    <Button variant="outline" onClick={() => navigate("/inventory")}>← Back</Button>
+                </PageHeader>
 
-            <div className="max-w-xl">
-                <ItemCreateSuccess
-                    onScanAnother={() => {
-                        setCreated(false);
-                        setScanState("idle");
-                        setTagData(null);
-                        setForm({ sku: "", name: "", quantity: "" });
-                        setErrors({});
-                    }}
-                    onGoToInventory={() => navigate("/inventory")}
-                />
-            </div>
-        </>
+                <div className="max-w-xl">
+                    <ItemCreateSuccess
+                        onScanAnother={() => {
+                            setCreated(false);
+                            setScanState("idle");
+                            setTagData(null);
+                            setForm({ sku: "", name: "", quantity: "" });
+                            setErrors({});
+                        }}
+                        onGoToInventory={() => navigate("/inventory")}
+                    />
+                </div>
+            </>
         );
     }
 
