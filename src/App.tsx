@@ -19,6 +19,7 @@ import ReportsPage from "./pages/ReportsPage.tsx";
 import LowStockPage from "./pages/LowStockPage";
 import { CreateZonePage }  from "./pages/CreateZonePage";
 import { EditZonePage } from "./pages/EditZonePage";
+import { ViewItemPage } from "./pages/ViewItemPage";
 
 // TODO: Add othrer pages and their routes here
 
@@ -45,6 +46,7 @@ export default function App() {
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/zones/create" element={<CreateZonePage />} />
               <Route path="/zones/edit/:warehouseName/:name" element={<EditZonePage />} />
+              <Route path="/items/:id" element={<ViewItemPage />} />
 
               {/* Admin-only routes */}
               {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
