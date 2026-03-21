@@ -32,6 +32,16 @@ export function EditItemPage() {
         if (item) setForm({ name: item.name, quantity: String(item.quantity) });
     }, [item]);
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const submit = () => {
+        const e: Record<string, string> = {};
+        if (!form.name.trim()) e.name = "Name is required";
+        if (form.quantity === "" || Number(form.quantity) < 0) e.quantity = "Valid quantity required";
+        setErrors(e);
+        if (Object.keys(e).length) return;
+    };
+
     if (isLoading) return (
         <div className="max-w-xl">
             <Skeleton className="h-8 w-48 mb-6" />
@@ -65,15 +75,17 @@ export function EditItemPage() {
                         <div className="flex flex-col gap-1.5">
                             <Label>Name *</Label>
                             <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                            {errors.name && <p className="text-destructive text-xs">{errors.name}</p>}
                         </div>
                         <div className="flex flex-col gap-1.5">
                             <Label>Quantity *</Label>
                             <Input type="number" min="0" value={form.quantity}
                                 onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} />
+                                {errors.quantity && <p className="text-destructive text-xs">{errors.quantity}</p>}
                         </div>
                         <div className="flex gap-2.5 flex-wrap">
                             <Button variant="outline" onClick={() => navigate("/inventory")}>Cancel</Button>
-                            <Button className="flex-1 min-w-36">✓ Save Changes</Button>
+                            <Button className="flex-1 min-w-36" onClick={submit}>Save Changes</Button>
                         </div>
                     </div>
                 </div>
