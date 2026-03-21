@@ -11,6 +11,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
 import { Skeleton } from "../components/ui/skeleton";
+import { useState, useEffect } from "react";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+
 
 export function EditItemPage() {
     const { sku } = useParams<{ sku: string }>();
@@ -21,6 +25,12 @@ export function EditItemPage() {
         queryFn: () => api.getItemBySku(sku!),
         enabled: !!sku,
     });
+
+    const [form, setForm] = useState({ name: "", quantity: "" }); // Local state for form inputs.
+
+    useEffect(() => {
+        if (item) setForm({ name: item.name, quantity: String(item.quantity) });
+    }, [item]);
 
     if (isLoading) return (
         <div className="max-w-xl">
@@ -41,7 +51,33 @@ export function EditItemPage() {
             </PageHeader>
 
             <div className="max-w-xl">
-                {/* form will go here */}
+                {/* form */}
+                <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <div className="p-4 flex flex-col gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label>RFID Tag UID</Label>
+                            <Input value={item.rfidTagUid ?? ""} disabled />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label>SKU</Label>
+                            <Input value={item.sku} disabled />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label>Name *</Label>
+                            <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label>Quantity *</Label>
+                            <Input type="number" min="0" value={form.quantity}
+                                onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} />
+                        </div>
+                        <div className="flex gap-2.5 flex-wrap">
+                            <Button variant="outline" onClick={() => navigate("/inventory")}>Cancel</Button>
+                            <Button className="flex-1 min-w-36">✓ Save Changes</Button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </>
     );
