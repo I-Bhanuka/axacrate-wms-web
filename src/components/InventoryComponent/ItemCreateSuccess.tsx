@@ -18,7 +18,7 @@ export function ItemCreateSuccess({ onScanAnother, onGoToInventory }: Props) {
             <div className="text-sm text-muted-foreground mb-4">What would you like to do next?</div>
             <div className="flex gap-2 justify-center">
                 <Button variant="outline" onClick={onScanAnother}>
-                    📡 Scan Another Tag
+                    <SearchCheck/> Scan Another Tag
                 </Button>
                 <Button onClick={onGoToInventory}>
                     Go to Inventory

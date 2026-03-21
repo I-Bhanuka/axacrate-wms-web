@@ -76,7 +76,7 @@ export default function App() {
       </BrowserRouter>
       <Toaster
         richColors
-        position="top-right"
+        position="top-center"
         toastOptions={{
           style: {
             background: "#131720",
