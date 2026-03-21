@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminRoute } from "./components/AdminRoute";  
+import { Toaster } from "sonner";
 
 // Pages
 import { LoginPage }      from "./pages/LoginPage";
@@ -17,6 +18,9 @@ import { ZonesPage }       from "./pages/ZonesPage";
 import ReportsPage from "./pages/ReportsPage.tsx";
 import LowStockPage from "./pages/LowStockPage";
 import { CreateZonePage }  from "./pages/CreateZonePage";
+import { EditZonePage } from "./pages/EditZonePage";
+import { ViewItemPage } from "./pages/ViewItemPage";
+import { EditItemPage } from "./pages/EditItemPage";
 
 // TODO: Add othrer pages and their routes here
 
@@ -42,6 +46,10 @@ export default function App() {
               <Route path="/low-stock" element={<LowStockPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/zones/create" element={<CreateZonePage />} />
+              <Route path="/zones/edit/:warehouseName/:name" element={<EditZonePage />} />
+              <Route path="/inventory/:id" element={<ViewItemPage />} />
+              <Route path="/inventory/edit/:sku" element={<EditItemPage />} />
+
 
               {/* Admin-only routes */}
               {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
@@ -58,6 +66,17 @@ export default function App() {
 
         </Routes>
       </BrowserRouter>
+      <Toaster
+        richColors
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#131720",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "#ffffff",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

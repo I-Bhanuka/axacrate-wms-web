@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
 import { useDebounce } from "../hooks/useDebounce";
-import { fmtNum, fmtDate, getErrorMessage } from "../lib/utils";
+import { fmtNum, fmtDate } from "../lib/utils";
 import { ZoneBadge } from "../components/ui/ZoneBadge";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Button } from "../components/ui/button";
@@ -28,7 +28,7 @@ export function InventoryPage() {
     const [search, setSearch] = useState("");
     const [filters, setFilters] = useState({ zoneId: "", minQty: "", maxQty: "" });
     const [deleteTarget, setDeleteTarget] = useState<InventoryItem | null>(null);
-    
+
 
     const dSearch = useDebounce(search, 300);
 
@@ -89,6 +89,7 @@ export function InventoryPage() {
             {/* Delete confirmation modal */}
             {deleteTarget && (
                 <ConfirmModal
+                    className="bg-neutral-900 border border-border"
                     title="Delete Item"
                     body={`Delete "${deleteTarget.sku} — ${deleteTarget.name}"? This cannot be undone.`}
                     onConfirm={() => deleteMutation.mutate(deleteTarget.sku)}
@@ -142,6 +143,7 @@ export function InventoryPage() {
                                     <th key={h}
                                         className={`text-left text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-4 py-3 whitespace-nowrap ${SORT_COLS[h] ? "cursor-pointer hover:text-foreground select-none" : ""}`}
                                         onClick={() => SORT_COLS[h] && handleSort(SORT_COLS[h])}
+                                    // Only attach click handler to sortable columns, and change cursor to indicate interactivity
                                     >
                                         {h}{SORT_COLS[h] && <span className="opacity-50">{sortIcon(SORT_COLS[h])}</span>}
                                     </th>
@@ -178,7 +180,7 @@ export function InventoryPage() {
                                     <td className="px-4 py-3">
                                         <div className="flex gap-1.5">
                                             <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.id}`)}>View</Button>
-                                            <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.sku}/edit`)}>Edit</Button>
+                                            <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/edit/${item.sku}`)}>Edit</Button>
                                             <Button size="sm" variant="destructive" onClick={() => setDeleteTarget(item)}>Del</Button>
                                         </div>
                                     </td>
@@ -187,7 +189,24 @@ export function InventoryPage() {
                         </tbody>
                     </table>
                 </div>
-                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between px-4 py-3 border-t border-border text-sm flex-wrap gap-2">
+                        <span className="text-muted-foreground text-xs">Showing {items.length} of {fmtNum(totalElements)}</span>
+                        <div className="flex gap-1">
+                            {[{ l: "«", a: () => setPage(0) }, { l: "‹", a: () => setPage(p => p - 1) }].map(b => (
+                                <Button key={b.l} size="sm" variant="outline" disabled={page === 0} onClick={b.a}>{b.l}</Button>
+                            ))}
+                            {pageNumbers.map(p => (
+                                <Button key={p} size="sm" variant={p === page ? "default" : "outline"} onClick={() => setPage(p)}>{p + 1}</Button>
+                            ))}
+                            {[{ l: "›", a: () => setPage(p => p + 1) }, { l: "»", a: () => setPage(totalPages - 1) }].map(b => (
+                                <Button key={b.l} size="sm" variant="outline" disabled={page >= totalPages - 1} onClick={b.a}>{b.l}</Button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
             </div>
         </>
     );
