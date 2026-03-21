@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
@@ -15,17 +15,13 @@ import { Skeleton } from "../components/ui/skeleton";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "../components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Plus, Search, Warehouse, Power, PowerOff, Pencil } from "lucide-react";
-import type { Zone } from "../types";
 import { ZoneBadge } from "../components/ui/ZoneBadge";
 
 export function ZonesPage() {
   const navigate = useNavigate();
-  const qc       = useQueryClient();
+  const qc = useQueryClient();
   const [search,   setSearch]   = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("ALL");
-  const [editZone, setEditZone] = useState<Zone | null>(null);
-  const [editName, setEditName] = useState("");
-  const [editCap,  setEditCap]  = useState("");
 
   // ── Fetch all zones ────────────────────────────────────────────────────────
   const { data: zones = [], isLoading } = useQuery({
@@ -47,16 +43,6 @@ export function ZonesPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all }),
   });
 
-  // ── Update zone mutation ───────────────────────────────────────────────────
-  const updateMutation = useMutation({
-    mutationFn: ({ warehouseName, name, data }: { warehouseName: string; name: string; data: { name?: string; capacity?: number } }) =>
-      api.updateZone(warehouseName, name, data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
-      setEditZone(null);
-    },
-  });
-
   // ── Extract unique warehouse names from zones ──────────────────────────────
   const warehouses = ["ALL", ...Array.from(new Set(zones.map((z) => z.warehouseName)))];
 
@@ -66,26 +52,6 @@ export function ZonesPage() {
     const matchesWarehouse = selectedWarehouse === "ALL" || z.warehouseName === selectedWarehouse;
     return matchesSearch && matchesWarehouse;
   });
-
-  // ── Open edit modal ────────────────────────────────────────────────────────
-  const openEdit = (zone: Zone) => {
-    setEditZone(zone);
-    setEditName(zone.name);
-    setEditCap(String(zone.capacity));
-  };
-
-  // ── Submit edit ────────────────────────────────────────────────────────────
-  const submitEdit = () => {
-    if (!editZone) return;
-    updateMutation.mutate({
-      warehouseName: editZone.warehouseName,
-      name:          editZone.name,
-      data: {
-        name:     editName !== editZone.name            ? editName          : undefined,
-        capacity: Number(editCap) !== editZone.capacity ? Number(editCap)   : undefined,
-      },
-    });
-  };
 
   // ── Capacity bar color based on utilization ────────────────────────────────
   const utilizationColor = (current: number, capacity: number) => {
@@ -116,7 +82,7 @@ export function ZonesPage() {
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Warehouses" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-neutral-900 border border-border" position="popper">
               {warehouses.map((w) => (
                 <SelectItem key={w} value={w}>
                   {w === "ALL" ? "All Warehouses" : w}
@@ -136,18 +102,17 @@ export function ZonesPage() {
               className="pl-9"
             />
           </div>
-
         </div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center text-white">ZONE NAME</TableHead>
-              <TableHead className="text-center text-white">WAREHOUSE</TableHead>
-              <TableHead className="text-center text-white">TYPE</TableHead>
-              <TableHead className="text-center text-white">CAPACITY</TableHead>
-              <TableHead className="text-center text-white">STATUS</TableHead>
-              <TableHead className="text-center text-white">HARDWARE</TableHead>
-              <TableHead className="text-center text-white">ACTIONS</TableHead>
+              <TableHead className="text-[11px] text-center text-white">ZONE NAME</TableHead>
+              <TableHead className="text-[11px] text-center text-white">WAREHOUSE</TableHead>
+              <TableHead className="text-[11px] text-center text-white">TYPE</TableHead>
+              <TableHead className="text-[11px] text-center text-white">CAPACITY</TableHead>
+              <TableHead className="text-[11px] text-center text-white">STATUS</TableHead>
+              <TableHead className="text-[11px] text-center text-white">HARDWARE</TableHead>
+              <TableHead className="text-[11px] text-center text-white">ACTIONS</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -186,20 +151,20 @@ export function ZonesPage() {
                 <TableRow key={zone.id}>
 
                   {/* Zone name */}
-                  <TableCell>
+                  <TableCell className="px-2 py-2 whitespace-normal">
                     <ZoneBadge zone={zone.name} className="!text-orange-400 !bg-orange-500/10 !border-orange-500/20" />
                   </TableCell>
 
                   {/* Warehouse */}
-                  <TableCell className="text-gray-400 font-medium">{zone.warehouseName}</TableCell>
+                  <TableCell className="text-[11px] px-2 py-2 whitespace-normal text-gray-400 font-medium">{zone.warehouseName}</TableCell>
 
                   {/* Zone type */}
-                  <TableCell className="text-gray-400 font-medium">
+                  <TableCell className="text-[11px] px-2 py-2 whitespace-normal text-gray-400 font-medium">
                     {zone.zoneType.replace(/_/g, " ")}
                   </TableCell>
 
                   {/* Capacity with progress bar */}
-                  <TableCell>
+                  <TableCell className="px-2 py-2 whitespace-normal">
                     <div className="flex items-center gap-2">
                       <div className="w-20 bg-white/5 rounded-full h-1.5">
                         <div
@@ -214,12 +179,12 @@ export function ZonesPage() {
                   </TableCell>
 
                   {/* Status badge */}
-                  <TableCell>
+                  <TableCell className="px-1 py-2 whitespace-normal text-center">
                     <Badge
                       variant="outline"
                       className={zone.status === "ACTIVE"
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                        : "bg-red-500/10 text-red-400 border-red-500/20"
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[11px]"
+                        : "bg-red-500/10 text-red-400 border-red-500/20 text-[11px]"
                       }
                     >
                       {zone.status}
@@ -227,19 +192,19 @@ export function ZonesPage() {
                   </TableCell>
 
                   {/* Hardware */}
-                  <TableCell className="text-xs text-gray-400 font-medium">
+                  <TableCell className="text-[11px] px-2 py-2 whitespace-normal text-gray-400 font-medium">
                     {zone.hasHardware ? (zone.hardwareName ?? "Connected") : "None"}
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell>
+                  <TableCell className="px-2 py-2 whitespace-normal">
                     <div className="flex items-center justify-end gap-2">
 
                       {/* Edit button */}
                       <Button
                         variant="outline"
-                        size="sm"
-                        onClick={() => openEdit(zone)}
+                        size="sm" className="h-6 px-2 text-[11px]"
+                        onClick={() => navigate(`/zones/edit/${zone.warehouseName}/${zone.name}`)}
                       >
                         <Pencil size={11} />
                         Edit
@@ -252,7 +217,7 @@ export function ZonesPage() {
                           size="sm"
                           onClick={() => disableMutation.mutate({ warehouseName: zone.warehouseName, name: zone.name })}
                           disabled={disableMutation.isPending}
-                          className="border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-400"
+                          className="border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-400 h-6 px-2 text-[11px]"
                         >
                           <PowerOff size={11} />
                           Disable
@@ -263,7 +228,7 @@ export function ZonesPage() {
                           size="sm"
                           onClick={() => enableMutation.mutate({ warehouseName: zone.warehouseName, name: zone.name })}
                           disabled={enableMutation.isPending}
-                          className="border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-400"
+                          className="border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-400 h-6 px-2 text-[11px]"
                         >
                           <Power size={11} />
                           Enable
@@ -286,45 +251,6 @@ export function ZonesPage() {
           </div>
         )}
       </div>
-
-      {/* ── Edit modal ──────────────────────────────────────────────────────── */}
-      {editZone && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-xl">
-            <h2 className="text-sm font-semibold text-white mb-4">Edit Zone — {editZone.name}</h2>
-
-            {/* Zone name field */}
-            <div className="mb-3">
-              <label className="text-xs text-gray-400 mb-1 block">Zone Name</label>
-              <Input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} />
-            </div>
-
-            {/* Capacity field */}
-            <div className="mb-5">
-              <label className="text-xs text-gray-400 mb-1 block">Capacity</label>
-              <Input type="number" value={editCap} onChange={(e) => setEditCap(e.target.value)} />
-            </div>
-
-            {/* Error message */}
-            {updateMutation.isError && (
-              <p className="mt-3 text-xs text-red-400 text-center">
-                Failed to update zone. Please try again.
-              </p>
-            )}
-
-            {/* Modal action buttons */}
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex-1" onClick={() => setEditZone(null)}>
-                Cancel
-              </Button>
-              <Button className="flex-1" onClick={submitEdit} disabled={updateMutation.isPending}>
-                {updateMutation.isPending ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-
-          </div>
-        </div>
-      )}
     </>
   );
 }
