@@ -142,10 +142,15 @@ export function InventoryPage() {
                                 {COLS.map(h => (
                                     <th key={h}
                                         className={`text-left text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-4 py-3 whitespace-nowrap ${SORT_COLS[h] ? "cursor-pointer hover:text-foreground select-none" : ""}`}
+<<<<<<< HEAD
                                         onClick={() => SORT_COLS[h] && handleSort(SORT_COLS[h])}
                                     // Only attach click handler to sortable columns, and change cursor to indicate interactivity
+=======
+                                        onClick={() => SORT_COLS[h] && handleSort(SORT_COLS[h])}  
+                                        // Only attach click handler to sortable columns, and change cursor to indicate interactivity
+>>>>>>> cad9571 (Add necessary comments for the important lines)
                                     >
-                                        {h}{SORT_COLS[h] && <span className="opacity-50">{sortIcon(SORT_COLS[h])}</span>}
+                                        {h}{SORT_COLS[h] && <span className="opacity-50">{sortIcon(SORT_COLS[h])}</span>} 
                                     </th>
                                 ))}
                             </tr>
@@ -154,7 +159,7 @@ export function InventoryPage() {
                             {isLoading ? (
                                 Array.from({ length: 8 }).map((_, i) => (
                                     <tr key={i} className="border-b border-border">
-                                        {COLS.map(c => <td key={c} className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>)}
+                                        {COLS.map(c => <td key={c} className="px-4 py-3"><Skeleton className="h-4 w-20" /></td>)} 
                                     </tr>
                                 ))
                             ) : items.length === 0 ? (
