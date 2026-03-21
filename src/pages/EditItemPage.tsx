@@ -14,6 +14,7 @@ import { Skeleton } from "../components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 export function EditItemPage() {
@@ -34,12 +35,27 @@ export function EditItemPage() {
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const queryClient = useQueryClient();
+
+    const updateMutation = useMutation({
+        mutationFn: () => api.updateItem(sku!, {
+            name: form.name,
+            quantity: Number(form.quantity),
+        }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.inventory.all });
+            navigate("/inventory");
+        },
+    });
+
     const submit = () => {
         const e: Record<string, string> = {};
         if (!form.name.trim()) e.name = "Name is required";
         if (form.quantity === "" || Number(form.quantity) < 0) e.quantity = "Valid quantity required";
         setErrors(e);
         if (Object.keys(e).length) return;
+        updateMutation.mutate();
+
     };
 
     if (isLoading) return (
@@ -64,6 +80,11 @@ export function EditItemPage() {
                 {/* form */}
                 <div className="bg-card border border-border rounded-xl overflow-hidden">
                     <div className="p-4 flex flex-col gap-4">
+                        {updateMutation.isError && (
+                            <div className="bg-destructive/10 border border-destructive/30 text-destructive text-sm px-3 py-2 rounded-lg">
+                                Update failed. Please try again.
+                            </div>
+                        )}
                         <div className="flex flex-col gap-1.5">
                             <Label>RFID Tag UID</Label>
                             <Input value={item.rfidTagUid ?? ""} disabled />
@@ -81,11 +102,13 @@ export function EditItemPage() {
                             <Label>Quantity *</Label>
                             <Input type="number" min="0" value={form.quantity}
                                 onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} />
-                                {errors.quantity && <p className="text-destructive text-xs">{errors.quantity}</p>}
+                            {errors.quantity && <p className="text-destructive text-xs">{errors.quantity}</p>}
                         </div>
                         <div className="flex gap-2.5 flex-wrap">
                             <Button variant="outline" onClick={() => navigate("/inventory")}>Cancel</Button>
-                            <Button className="flex-1 min-w-36" onClick={submit}>Save Changes</Button>
+                            <Button className="flex-1 min-w-36" onClick={submit} disabled={updateMutation.isPending}>
+                                {updateMutation.isPending ? "Saving…" : "Save Changes"}
+                            </Button>
                         </div>
                     </div>
                 </div>
