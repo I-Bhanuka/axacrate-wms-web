@@ -49,24 +49,19 @@ export interface AlertItemDashboard {
 // TODO: loginRequest, AuthUser
 
 export interface LoginRequest {
-
   username: string;
-
   password: string;
-
 }
 
 
 
 export interface AuthUser {
-
   token: string;
-
   username: string;
-
   role: string;
-
+  id : string;
 }
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -148,6 +143,11 @@ export interface InventoryFilters {
   minQuantity?: number | string;
   maxQuantity?: number | string;
   query?: string;
+}
+
+export interface InventoryItemUpdateRequest {
+  name?: string;
+  quantity?: number;
 }
 
 

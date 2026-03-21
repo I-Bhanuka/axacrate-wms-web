@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { api } from "../api/http";
-import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users ,FileText } from "lucide-react";
+import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users, FileText, Radio } from "lucide-react";
 import logo from "../assets/logo.png";
 import { LiveFeed } from "./LiveFeed";
 
@@ -23,9 +22,12 @@ const NAV_ITEMS = [
 export function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isAdmin = user?.role === "ADMIN"; {/* true if the user is an admin, false if not */}
+  {/* State to control the visibility of the sidebar on mobile devices. Initially set to false (hidden) */}
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  {/* State to control the visibility of the live feed sidebar. Initially set to false (hidden) */}
+  const [liveFeedOpen, setLiveFeedOpen] = useState(false);
+
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
   const initials = user?.username?.slice(0, 2).toUpperCase() ?? "WH";
@@ -57,6 +59,14 @@ export function AppLayout() {
         <div
           className="fixed inset-0 bg-neutral-900/50 z-[199] lg:hidden"
           onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Mobile overlay — Live Feed */}
+      {liveFeedOpen && (
+        <div
+          className="fixed inset-0 bg-neutral-900/50 z-[199] lg:hidden"
+          onClick={() => setLiveFeedOpen(false)}
         />
       )}
 
@@ -95,7 +105,7 @@ export function AppLayout() {
           The condition has to return true for the item to be visible.
           */}
           {NAV_ITEMS.filter(item => 
-            !item.roles || item.roles.includes(user?.role)          
+            !item.roles || item.roles.includes(user?.role ?? "")          
           ).map(item  => (
             <NavLink
               key={item.to}
@@ -135,7 +145,7 @@ export function AppLayout() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col lg:ml-[220px] min-w-0">
+      <main className="flex-1 flex flex-col lg:ml-[220px] lg:mr-[260px] min-w-0">
 
         {/* Header */}
         <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10 gap-3">
@@ -154,7 +164,17 @@ export function AppLayout() {
             </span>
 
           </div>
+
+          {/* User avatar */}
           <div className="flex items-center gap-2 flex-shrink-0">
+
+            {/* Live Feed toggle — mobile only */}
+            <button
+              className="lg:hidden p-1.5 rounded-md text-muted-foreground hover:bg-muted"
+              onClick={() => setLiveFeedOpen(o => !o)}
+            >
+              <Radio size={18} />
+            </button>
 
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-xs font-bold">
               {initials}
@@ -171,9 +191,12 @@ export function AppLayout() {
         </div>
       </main>
 
-      {/* Live feed sidebar */}
-      <LiveFeed user={user} />
-      
+      <LiveFeed
+        user={user}
+        isOpen={liveFeedOpen}
+        onClose={() => setLiveFeedOpen(false)}
+      />
+          
 
     </div>
   );
