@@ -5,9 +5,9 @@ import type { MovementLog, FeedEntry } from "../types";
 
 export function LiveFeed({ user } : { user: { username: string } | null }) {
     const [feed, setFeed] = useState<FeedEntry[]>([]);
-    const [pulse, setPulse] = useState(false);
-    const [lastScan, setLastScan] = useState("—");
-    const [scanCount, setScanCount] = useState(0);
+    const [_pulse, setPulse] = useState(false);
+    const [_lastScan, setLastScan] = useState("—");
+    const [_scanCount, setScanCount] = useState(0);
     const seenIds = useRef(new Set<string>());
     const seeded = useRef(false);
 
