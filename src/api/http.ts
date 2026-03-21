@@ -11,6 +11,14 @@ import type {
   ZoneCreateRequest,
   ZoneUpdateRequest,
   RfidScanResponse,
+  InventoryFilters,
+  PageResponse,
+  UserResponseDTO,
+  CreateUserRequest,
+  LowStockItem,
+  DashboardReport,
+  DashboardReportRequest,
+  Warehouse
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
 
@@ -60,6 +68,25 @@ export const api = {
     const res = await http.get<ApiResponse<DashboardSummary>>("/api/inventory/dashboard");
     return res.data.data;
   },
+  
+  getDashboardReport: async (
+    data: DashboardReportRequest
+  ): Promise<DashboardReport> => {
+    const res = await http.post<ApiResponse<DashboardReport>>(
+      "/api/reports/dashboard",
+      data
+    );
+    return res.data.data;
+  },
+
+  exportDashboardReportCsv: async (
+    data: DashboardReportRequest
+  ): Promise<Blob> => {
+    const res = await http.post("/api/reports/dashboard/export/csv", data, {
+      responseType: "blob",
+    });
+    return res.data;
+  },
 
   // ── Inventory (M2 - Sheshan) ────────────────────────────────────────────────────────
   // TODO: getItems with filters, getItem by id/sku, create/update/delete item, getLowStock
@@ -68,6 +95,31 @@ export const api = {
     const res = await http.post<ApiResponse<InventoryItem>>("/api/inventory/create", data);
     return res.data.data;
   },
+
+  getItems: async (filters: InventoryFilters): Promise<PageResponse<InventoryItem>> => {
+    const { query, page = 0, size = 20, sort = "createdAt,desc", zoneId, minQuantity, maxQuantity } = filters;
+    if (query && query.length >= 3) {
+      const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory/search", {
+        params: { query, page, size },
+      });
+      return res.data.data;
+    }
+    const params: Record<string, unknown> = { page, size, sort };
+    if (zoneId)       params.zoneId      = zoneId;
+    if (minQuantity !== "") params.minQuantity = minQuantity;
+    if (maxQuantity !== "") params.maxQuantity = maxQuantity;
+    const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory", { params });
+    return res.data.data;
+  },
+
+
+    deleteItem: async (sku: string): Promise<void> => {
+    await http.delete(`/api/inventory/${sku}`);
+  },
+
+
+
+
   
 
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
@@ -115,7 +167,7 @@ export const api = {
     return res.data.data;
   },
 
-  // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
+  // ── RFID (M2 - Sheshan) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
     pollRfid: async (): Promise<RfidScanResponse | null> => {
     const res = await http.get<ApiResponse<RfidScanResponse | null>>("/api/rfid/write-latest");
@@ -130,12 +182,20 @@ export const api = {
         });
         return res.data.data;
       },
-  
+
+    getRecentActitvity: async (limit = 20): Promise<MovementLog[]> => {
+      const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/activity", {
+        params: { limit },
+      });
+      return res.data.data;
+    },
+      // ── Low Stock Alerts (M6 - Ahintha) ─────────────────────────────────────────────────────
+    getLowStockItems: async (): Promise<LowStockItem[]> => {
+    const res = await http.get<ApiResponse<LowStockItem[]>>("/api/inventory/low-stock");
+    return res.data.data;
+  },
 
 
-  // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
-  // TODO: getWarehouses for dropdown
-  
 
   // ── Alerts (M4 - Pulindu) ──────────────────────────────────────────────────────────────
   getAlerts: async (status?: string): Promise<Alert[]> => {
@@ -167,6 +227,39 @@ export const api = {
     const res = await http.post<ApiResponse<Alert>>("/api/alerts", data);
     return res.data.data;
   },
+
+
+  // ── User Management (M1 - Bhanuka) ────────────────────────────────────────────────────────────
+  getUsers: async (): Promise<UserResponseDTO[]> => {
+    const res = await http.get<ApiResponse<UserResponseDTO[]>>("/api/admin/users");
+    return res.data.data;
+  },
+
+  createUser: async (data: CreateUserRequest): Promise<UserResponseDTO> => {
+    const res = await http.post<ApiResponse<UserResponseDTO>>("/api/admin/users", data);
+    return res.data.data;
+  },
+
+  updateUserRole: async (id: string, data: { role: string }): Promise<UserResponseDTO> => {
+    const res = await http.put<ApiResponse<UserResponseDTO>>(`/api/admin/users/${id}/role`, data);
+    return res.data.data;
+  },
+
+  deleteUser: async (id: string): Promise<void> => {
+    await http.delete(`/api/admin/users/${id}`);
+  },
+    
+
+  
+  // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
+
+  // Getting all warehouses for the dropdown
+  getWarehouses: async (): Promise<Warehouse[]> => {
+    const res = await http.get<ApiResponse<Warehouse>>("/api/warehouses/all");
+    return res.data.data ? [res.data.data] : [];
+  },
+
+  
 };
 
 

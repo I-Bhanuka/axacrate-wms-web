@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AdminRoute } from "./components/AdminRoute";  
 
 // Pages
 import { LoginPage }      from "./pages/LoginPage";
@@ -10,9 +11,15 @@ import { DashboardPage }  from "./pages/DashboardPage";
 import MovementsPage      from "./pages/MovementsPage";
 import { CreateItemPage } from "./pages/CreateItemPage";
 import { AlertsPage }     from "./pages/AlertsPage";
+import { InventoryPage } from "./pages/InventoryPage";
+import { UserManagementPage } from "./pages/UserManagementPage";
+import { ZonesPage }       from "./pages/ZonesPage";
+import ReportsPage from "./pages/ReportsPage.tsx";
+import LowStockPage from "./pages/LowStockPage";
+import { CreateZonePage }  from "./pages/CreateZonePage";
+import GeofencingPage      from "./pages/GeofencingPage";
 
-
-// TODO: Add othrer pages and their routes here
+// TODO: Add other pages and their routes here
 
 export default function App() {
   return (
@@ -31,7 +38,21 @@ export default function App() {
               <Route path="/movements" element={<MovementsPage />} />
               <Route path="/createItem"      element={<CreateItemPage />} />
               <Route path="/alerts"             element={<AlertsPage />}     />
+              <Route path="/inventory"          element={<InventoryPage />}  />
+              <Route path="/zones"        element={<ZonesPage />} />
+              <Route path="/low-stock" element={<LowStockPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/zones/create" element={<CreateZonePage />} />
+              <Route path="/geofencing" element={<GeofencingPage />} />
+
+              {/* Admin-only routes */}
+              {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
+              <Route element={<AdminRoute />}>
+                <Route path="/users" element={<UserManagementPage />} />
+              </Route>
+            
             </Route>
+            
           </Route>
 
           {/* Fallback */}
