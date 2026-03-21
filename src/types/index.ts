@@ -145,6 +145,11 @@ export interface InventoryFilters {
   query?: string;
 }
 
+export interface InventoryItemUpdateRequest {
+  name?: string;
+  quantity?: number;
+}
+
 
 
 // ─────────────────────────────────────────────────────────────────────────────

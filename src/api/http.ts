@@ -18,7 +18,8 @@ import type {
   LowStockItem,
   DashboardReport,
   DashboardReportRequest,
-  Warehouse
+  Warehouse,
+  InventoryItemUpdateRequest
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
 
@@ -114,6 +115,16 @@ export const api = {
 
   getItem: async (id: string): Promise<InventoryItem> => {
     const res = await http.get<ApiResponse<InventoryItem>>(`/api/inventory/${id}`);
+    return res.data.data;
+  },
+
+  getItemBySku: async (sku: string): Promise<InventoryItem> => {
+    const res = await http.get<ApiResponse<InventoryItem>>(`/api/inventory/sku/${sku}`);
+    return res.data.data;
+  },
+
+  updateItem: async (sku: string, data: InventoryItemUpdateRequest): Promise<InventoryItem> => {
+    const res = await http.put<ApiResponse<InventoryItem>>(`/api/inventory/${sku}`, data);
     return res.data.data;
   },
 
