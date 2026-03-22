@@ -57,9 +57,6 @@ export function DashboardPage() {
         </Button>
       </PageHeader>
 
-      {/* Ahintha TODO: Low stock alert */}
-
-      {/*M1-B*/}
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-5">
         {isLoading ? (
@@ -150,11 +147,6 @@ export function DashboardPage() {
 
         </div>
       </div>
-
-      {/* Sheshan TODO: Recent Items Table */}
-      {/* Aatif TODO: Zone Charts*/}
-
-      
       
     </>
   );
