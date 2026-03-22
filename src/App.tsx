@@ -15,7 +15,7 @@ import { AlertsPage }     from "./pages/AlertsPage";
 import { InventoryPage } from "./pages/InventoryPage";
 import { UserManagementPage } from "./pages/UserManagementPage";
 import { ZonesPage }       from "./pages/ZonesPage";
-import ReportsPage from "./pages/ReportsPage.";
+import  ReportsPage  from "./pages/ReportsPage";
 import LowStockPage from "./pages/LowStockPage";
 import { CreateZonePage }  from "./pages/CreateZonePage";
 import { EditZonePage } from "./pages/EditZonePage";
