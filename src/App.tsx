@@ -3,21 +3,26 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { AdminRoute } from "./components/AdminRoute";  
+import { AdminRoute } from "./components/AdminRoute";
+import { Toaster } from "sonner";
 
 // Pages
-import { LoginPage }      from "./pages/LoginPage";
-import { DashboardPage }  from "./pages/DashboardPage";
-import MovementsPage      from "./pages/MovementsPage";
+import { LoginPage } from "./pages/LoginPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import MovementsPage from "./pages/MovementsPage";
 import { CreateItemPage } from "./pages/CreateItemPage";
-import { AlertsPage }     from "./pages/AlertsPage";
+import { AlertsPage } from "./pages/AlertsPage";
 import { InventoryPage } from "./pages/InventoryPage";
 import { UserManagementPage } from "./pages/UserManagementPage";
-import { ZonesPage }       from "./pages/ZonesPage";
+import { ZonesPage } from "./pages/ZonesPage";
 import ReportsPage from "./pages/ReportsPage.tsx";
 import LowStockPage from "./pages/LowStockPage";
 import { CreateZonePage }  from "./pages/CreateZonePage";
 import GeofencingPage      from "./pages/GeofencingPage";
+import { CreateZonePage } from "./pages/CreateZonePage";
+import { EditZonePage } from "./pages/EditZonePage";
+import GeofencingPage from "./pages/GeofencingPage";
+import { ViewItemPage } from "./pages/ViewItemPage";
 
 // TODO: Add other pages and their routes here
 
@@ -34,25 +39,28 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard"          element={<DashboardPage />}  />
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/movements" element={<MovementsPage />} />
-              <Route path="/createItem"      element={<CreateItemPage />} />
-              <Route path="/alerts"             element={<AlertsPage />}     />
-              <Route path="/inventory"          element={<InventoryPage />}  />
-              <Route path="/zones"        element={<ZonesPage />} />
+              <Route path="/geofencing" element={<GeofencingPage />} />
+              <Route path="/createItem" element={<CreateItemPage />} />
+              <Route path="/alerts" element={<AlertsPage />} />
+              <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/zones" element={<ZonesPage />} />
               <Route path="/low-stock" element={<LowStockPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/zones/create" element={<CreateZonePage />} />
               <Route path="/geofencing" element={<GeofencingPage />} />
+              <Route path="/zones/edit/:warehouseName/:name" element={<EditZonePage />} />
+              <Route path="/items/:id" element={<ViewItemPage />} />
 
               {/* Admin-only routes */}
               {/* AdminRoute checks role. Non-admins are redirected to /dashboard. */}
               <Route element={<AdminRoute />}>
                 <Route path="/users" element={<UserManagementPage />} />
               </Route>
-            
+
             </Route>
-            
+
           </Route>
 
           {/* Fallback */}
@@ -60,6 +68,17 @@ export default function App() {
 
         </Routes>
       </BrowserRouter>
+      <Toaster
+        richColors
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: "#131720",
+            border: "1px solid rgba(255,255,255,0.1)",
+            color: "#ffffff",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

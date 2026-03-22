@@ -49,24 +49,19 @@ export interface AlertItemDashboard {
 // TODO: loginRequest, AuthUser
 
 export interface LoginRequest {
-
   username: string;
-
   password: string;
-
 }
 
 
 
 export interface AuthUser {
-
   token: string;
-
   username: string;
-
   role: string;
-
+  id: string;
 }
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ZONES  (M3)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -148,6 +143,11 @@ export interface InventoryFilters {
   minQuantity?: number | string;
   maxQuantity?: number | string;
   query?: string;
+}
+
+export interface InventoryItemUpdateRequest {
+  name?: string;
+  quantity?: number;
 }
 
 
@@ -304,4 +304,38 @@ export interface Warehouse {
 // GEOFENCING  (M5 - Daniru)
 // ─────────────────────────────────────────────────────────────────────────────
 // TOOD: GeofencingRule
+// ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface WorkflowRule {
+  from: string;
+  to: string;
+  label: string;
+}
+
+// Re-uses the existing ZoneResponseDTO shape from the backend
+export interface ZoneStatus {
+  id: string;
+  name: string;
+  zoneType: string;
+  capacity: number;
+  currentItemCount: number;
+  status: string;
+  hasHardware: boolean;
+  hardwareName: string | null;
+  hardwareType: string | null;
+  hardwareStatus: string | null;
+}
+
+// Re-uses AlertResponseDTO
+export interface AlertItem {
+  id: string;
+  alertType: string;
+  severity: string;
+  alertStatus: string;
+  message: string | null;
+  zoneId: string | null;
+  zoneName: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+  resolvedByUsername: string | null;
+}

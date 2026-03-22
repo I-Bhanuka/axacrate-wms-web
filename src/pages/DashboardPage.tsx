@@ -3,10 +3,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
-import { fmtNum, fmtDate, fmtTime } from "../lib/utils";
+import { fmtNum } from "../lib/utils";
 import { PageHeader } from "../components/ui/PageHeader";
 import { StatCard } from "../components/ui/StatCard";
 import { Button } from "../components/ui/button";
@@ -19,7 +18,6 @@ import { RecentAlerts } from "../components/dashboardComponents/RecentAlerts";
 
 
 export function DashboardPage() {
-  const navigate = useNavigate();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.dashboard,

@@ -15,6 +15,14 @@ import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
 import { Bell, ShieldAlert, CheckCircle2, Clock, RotateCcw, Filter, MapPin } from "lucide-react";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+
 // ── Severity helpers ──────────────────────────────────────────────────────────
 
 const SEVERITY_COLOR: Record<string, string> = {
@@ -299,16 +307,23 @@ export function AlertsPage() {
           <div className="flex items-center gap-1.5">
             <MapPin size={14} className="text-muted-foreground" />
             <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Zone</span>
-            <select
+            <Select
               value={zoneFilter}
-              onChange={e => setZoneFilter(e.target.value)}
-              className="ml-1 h-7 rounded-md border border-border bg-muted text-xs text-foreground px-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+              onValueChange={(value) => setZoneFilter(value)}
             >
-              <option value="ALL">All Zones</option>
-              {zones.map(z => (
-                <option key={z.id} value={z.id}>{z.name}</option>
-              ))}
-            </select>
+              <SelectTrigger className="ml-1 h-7 text-xs w-[140px]">
+                <SelectValue placeholder="All Zones" />
+              </SelectTrigger>
+
+              <SelectContent className="bg-neutral-900 border border-border">
+                <SelectItem value="ALL">All Zones</SelectItem>
+                {zones.map((z) => (
+                  <SelectItem key={z.id} value={z.id}>
+                    {z.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
         </div>

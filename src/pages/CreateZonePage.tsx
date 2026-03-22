@@ -14,6 +14,7 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import type { Warehouse } from "../types";
+import { toast } from "sonner";
 
 // ── Zone type and status options (matching backend enums) ──────────────────
 const ZONE_TYPES = [
@@ -62,8 +63,20 @@ export function CreateZonePage() {
         status:        form.status,
       }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
-      navigate("/zones");
+        // Play a subtle notification sound
+        const ctx = new AudioContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = 520;
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.3);
+        qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+        toast.success("Zone created successfully!");
+        navigate("/zones");
     },
   });
 
@@ -110,7 +123,7 @@ export function CreateZonePage() {
           <Label className="mb-1.5 block">Zone Name</Label>
           <Input
             type="text"
-            placeholder="e.g. StorageZone1"
+            placeholder="Enter zone name"
             value={form.name}
             onChange={(e) => handleChange("name", e.target.value)}
           />
@@ -124,7 +137,7 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select zone type" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-[#131720] border border-border" position="popper">
               {ZONE_TYPES.map((t) => (
                 <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
               ))}
@@ -140,7 +153,7 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
             <SelectValue placeholder="Select warehouse" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-[#131720] border border-border" position="popper">
             {warehouses.map((w: Warehouse) => (
                 <SelectItem key={w.id} value={w.name}>{w.name}</SelectItem>
             ))}
@@ -154,10 +167,11 @@ export function CreateZonePage() {
           <Label className="mb-1.5 block">Capacity</Label>
           <Input
             type="number"
-            placeholder="e.g. 100"
+            placeholder="Enter capacity"
             value={form.capacity}
             onChange={(e) => handleChange("capacity", e.target.value)}
-          />
+            className="[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
           {errors.capacity && <p className="mt-1 text-xs text-red-400">{errors.capacity}</p>}
         </div>
 
@@ -168,7 +182,7 @@ export function CreateZonePage() {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border border-border">
+            <SelectContent className="bg-[#131720] border border-border" position="popper">
               {ZONE_STATUSES.map((s) => (
                 <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
               ))}
