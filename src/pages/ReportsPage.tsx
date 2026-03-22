@@ -10,7 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { FileText, Download } from "lucide-react";
+import {
+  Package,
+  Hash,
+  AlertTriangle,
+  Warehouse,
+  FileText,
+  Download,
+} from "lucide-react";
 
 const EVENT_STYLE: Record<string, string> = {
   MOVEMENT: "bg-blue-500/15 text-blue-400 border-blue-500/30",
@@ -40,6 +47,88 @@ function fmtTime(iso: string) {
     d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
     " · " +
     d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+  );
+}
+
+function ReportStatCard({
+  label,
+  value,
+  icon,
+  accentColor,
+  subtitle,
+}: {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+  accentColor: string;
+  subtitle: string;
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {label}
+        </span>
+        <div
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
+          style={{ background: `${accentColor}20`, color: accentColor }}
+        >
+          {icon}
+        </div>
+      </div>
+
+      <div>
+        <div className="text-3xl font-bold text-foreground" style={{ color: accentColor }}>
+          {value.toLocaleString()}
+        </div>
+        <div className="mt-0.5 text-[11px] text-muted-foreground">{subtitle}</div>
+      </div>
+
+      <div className="h-[2px] rounded-full" style={{ background: `${accentColor}40` }} />
+    </div>
+  );
+}
+
+function DarkCheckbox({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className={`w-full rounded-xl border p-4 text-left transition-all ${
+        checked
+          ? "border-orange-500/30 bg-orange-500/10 text-orange-400"
+          : "border-white/[0.06] bg-white/[0.02] text-white/40 hover:border-white/10 hover:text-white/60"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all ${
+            checked ? "border-orange-500 bg-orange-500" : "border-white/20 bg-transparent"
+          }`}
+        >
+          {checked && (
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+              <path
+                d="M1 4l2.5 2.5L9 1"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </div>
+        <span className="text-[12px] font-medium leading-tight">{label}</span>
+      </div>
+    </button>
   );
 }
 
@@ -124,51 +213,50 @@ export default function ReportsPage() {
           </Select>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
-          <label className="flex items-center gap-2 text-sm font-medium">
-            <input
-              type="checkbox"
-              checked={includeLowStock}
-              onChange={(e) => setIncludeLowStock(e.target.checked)}
-            />
-            Include Low Stock Section
-          </label>
-        </div>
+        <DarkCheckbox
+          label="Include Low Stock Section"
+          checked={includeLowStock}
+          onChange={setIncludeLowStock}
+        />
 
-        <div className="rounded-xl border border-border bg-card p-4">
-          <label className="flex items-center gap-2 text-sm font-medium">
-            <input
-              type="checkbox"
-              checked={includeRecentMovements}
-              onChange={(e) => setIncludeRecentMovements(e.target.checked)}
-            />
-            Include Recent Movements Section
-          </label>
-        </div>
+        <DarkCheckbox
+          label="Include Recent Movements Section"
+          checked={includeRecentMovements}
+          onChange={setIncludeRecentMovements}
+        />
       </div>
 
       {report && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <div className="text-sm text-muted-foreground">Total Items</div>
-              <div className="text-2xl font-bold">{report.totalItems}</div>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card p-4">
-              <div className="text-sm text-muted-foreground">Total Quantity</div>
-              <div className="text-2xl font-bold">{report.totalQuantity}</div>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card p-4">
-              <div className="text-sm text-muted-foreground">Low Stock Count</div>
-              <div className="text-2xl font-bold">{report.lowStockCount}</div>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card p-4">
-              <div className="text-sm text-muted-foreground">Active Zones</div>
-              <div className="text-2xl font-bold">{report.activeZones}</div>
-            </div>
+            <ReportStatCard
+              label="Total Items"
+              value={report.totalItems}
+              icon={<Package size={18} />}
+              accentColor="#576A8F"
+              subtitle="unique SKUs"
+            />
+            <ReportStatCard
+              label="Total Quantity"
+              value={report.totalQuantity}
+              icon={<Hash size={18} />}
+              accentColor="#B7BDF7"
+              subtitle="units tracked"
+            />
+            <ReportStatCard
+              label="Low Stock"
+              value={report.lowStockCount}
+              icon={<AlertTriangle size={18} />}
+              accentColor={report.lowStockCount > 0 ? "#ef4444" : "#10b981"}
+              subtitle="below threshold"
+            />
+            <ReportStatCard
+              label="Active Zones"
+              value={report.activeZones}
+              icon={<Warehouse size={18} />}
+              accentColor="#f97316"
+              subtitle="operational"
+            />
           </div>
 
           {report.lowStockItems?.length > 0 && (
