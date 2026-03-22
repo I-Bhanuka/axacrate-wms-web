@@ -142,13 +142,8 @@ export function InventoryPage() {
                                 {COLS.map(h => (
                                     <th key={h}
                                         className={`text-left text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-4 py-3 whitespace-nowrap ${SORT_COLS[h] ? "cursor-pointer hover:text-foreground select-none" : ""}`}
-<<<<<<< HEAD
                                         onClick={() => SORT_COLS[h] && handleSort(SORT_COLS[h])}
-                                    // Only attach click handler to sortable columns, and change cursor to indicate interactivity
-=======
-                                        onClick={() => SORT_COLS[h] && handleSort(SORT_COLS[h])}  
                                         // Only attach click handler to sortable columns, and change cursor to indicate interactivity
->>>>>>> cad9571 (Add necessary comments for the important lines)
                                     >
                                         {h}{SORT_COLS[h] && <span className="opacity-50">{sortIcon(SORT_COLS[h])}</span>} 
                                     </th>
