@@ -339,3 +339,26 @@ export interface AlertItem {
   resolvedAt: string | null;
   resolvedByUsername: string | null;
 }
+
+// ── Add these interfaces to src/types/index.ts ────────────────────────────────
+ 
+export interface TagHealth {
+  tagId: string;
+  tagUid: string;
+  tagStatus: string;
+  healthStatus: string;
+  readsLastHour: number;
+  minRequired: number;
+  inventoryItemId: string | null;
+  inventoryItemName: string | null;
+  lastSeenZone: string | null;
+  lastSeenAt: string | null;
+  alertRaised: boolean;
+}
+
+export interface ReplaceTagRequest {
+  unhealthyTagUid: string;
+  newTagUid: string;
+  alertId: string;
+}
+ 

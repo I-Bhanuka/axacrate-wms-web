@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
   { to: "/zones", label: "Zones", icon: <Grid size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
   { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/>, roles: ["ADMIN", "MANAGER"] },
+  { to: "/tag-health", label: "Tag Health", icon: <Radio size={18}/>, roles: ["ADMIN", "MANAGER","WORKER"] },
   { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"] },
   { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"]},
   { to: "/users", label: "User Management", icon: <Users size={18}/>, roles: ["ADMIN"] },

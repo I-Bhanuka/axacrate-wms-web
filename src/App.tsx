@@ -21,7 +21,8 @@ import { CreateZonePage }  from "./pages/CreateZonePage";
 import { EditZonePage } from "./pages/EditZonePage";
 import { ViewItemPage } from "./pages/ViewItemPage";
 import { EditItemPage } from "./pages/EditItemPage";
-import { GeofencingPage } from "./pages/GeofencingPage";
+import {GeofencingPage }  from "./pages/GeofencingPage";
+import TagHealthPage  from "./pages/Taghealthpage";
 
 // TODO: Add othrer pages and their routes here
 
@@ -51,6 +52,7 @@ export default function App() {
               <Route path="/inventory/:id" element={<ViewItemPage />} />
               <Route path="/inventory/edit/:sku" element={<EditItemPage />} />
               <Route path="/geofencing" element={<GeofencingPage />} />
+              <Route path="/tag-health"   element={<TagHealthPage />}  />
 
 
               {/* Admin-only routes */}
