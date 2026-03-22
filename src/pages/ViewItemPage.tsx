@@ -5,7 +5,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useNavigate, useParams } from "react-router-dom";  // Importing useNavigate to programmatically navigate and useParams to access URL parameters
-<<<<<<< HEAD
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
@@ -16,31 +15,21 @@ import { Button } from "../components/ui/button";
 import { PageHeader } from "../components/ui/PageHeader"; // Importing a PageHeader component for consistent page headers across the app.
 import { fmtDate, fmtNum } from "../lib/utils"; // Importing formatting utilities for dates and numbers.
 import { ZoneBadge } from "../components/ui/ZoneBadge"; // Importing a ZoneBadge component to visually represent the item's current zone.
-=======
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../api/http";
-import { QUERY_KEYS } from "../lib/queryClient";
-import { Skeleton } from "../components/ui/skeleton";  // Importing a Skeleton component for loading state visualization
->>>>>>> 8781e9f (Add initial viewItemPage)
 
 
 export function ViewItemPage() {
     const { id } = useParams<{ id: string }>(); // Get the item ID from the URL parameters
     const navigate = useNavigate();
 
-<<<<<<< HEAD
     const queryClient = useQueryClient();
     const [confirmDel, setConfirmDel] = useState(false);
 
-=======
->>>>>>> 8781e9f (Add initial viewItemPage)
     const { data: item, isLoading } = useQuery({
         queryKey: QUERY_KEYS.inventory.item(id!), // Assuming the API client has a method to fetch item details by ID
         queryFn: () => api.getItem(id!),          // Replace with actual API call to fetch item details
         enabled: !!id,                            // Only run the query if an ID is provided
     });
 
-<<<<<<< HEAD
     const deleteMutation = useMutation({
         mutationFn: () => api.deleteItem(item!.sku),
         onSuccess: () => {
@@ -50,9 +39,6 @@ export function ViewItemPage() {
     });
 
 
-
-=======
->>>>>>> 8781e9f (Add initial viewItemPage)
     // Handle loading state
     if (isLoading) return (
         <div className="max-w-xl">
@@ -66,7 +52,6 @@ export function ViewItemPage() {
     // Handle case where item is not found
     if (!item) return <div className="text-muted-foreground p-4">Item not found</div>;
 
-<<<<<<< HEAD
     const fields = [
         { label: "SKU", value: item.sku, mono: true },
         { label: "Name", value: item.name, mono: false },
@@ -121,11 +106,4 @@ export function ViewItemPage() {
             </div>
         </>
             );
-=======
-    return (
-        <div className="max-w-xl">
-            <p className="text-muted-foreground p-4">Item loaded: {item.sku}</p>
-        </div>
-    );
->>>>>>> 8781e9f (Add initial viewItemPage)
 }
