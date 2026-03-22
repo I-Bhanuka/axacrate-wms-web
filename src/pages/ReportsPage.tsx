@@ -1,7 +1,9 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../api/http";
 import { PageHeader } from "../components/ui/PageHeader";
+import { SectionHeader } from "../components/dashboardComponents/SectionHeader";
 import { Button } from "../components/ui/button";
 import {
   Select,
@@ -49,6 +51,14 @@ function fmtTime(iso: string) {
     d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
   );
 }
+
+const PANEL: CSSProperties = {
+  background: "rgba(255,255,255,0.02)",
+  border: "1px solid rgba(255,255,255,0.06)",
+  borderRadius: 10,
+  overflow: "hidden",
+  marginTop: 20,
+};
 
 function ReportStatCard({
   label,
@@ -145,9 +155,7 @@ export default function ReportsPage() {
         includeLowStock,
         includeRecentMovements,
       }),
-    onSuccess: (data) => {
-      setReport(data);
-    },
+    onSuccess: (data) => setReport(data),
   });
 
   const exportMutation = useMutation({
@@ -191,44 +199,55 @@ export default function ReportsPage() {
         </Button>
       </PageHeader>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-border bg-card p-4">
-          <label className="text-sm font-medium text-foreground">
-            Recent Movements Limit
-          </label>
+      <div style={PANEL}>
+        <SectionHeader label="REPORT OPTIONS" sub="Configure what to include in the report" />
+        <div className="grid gap-3 p-4 md:grid-cols-3">
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-semibold uppercase tracking-wider text-white/40">
+              Movement Limit
+            </label>
 
-          <Select
-            value={String(recentMovementLimit)}
-            onValueChange={(value) => setRecentMovementLimit(Number(value))}
-          >
-            <SelectTrigger className="mt-2 w-full">
-              <SelectValue placeholder="Select limit" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectContent>
-          </Select>
+            <Select
+              value={String(recentMovementLimit)}
+              onValueChange={(value) => setRecentMovementLimit(Number(value))}
+            >
+              <SelectTrigger className="border-white/10 bg-white/[0.04] text-white/70 transition-colors hover:border-white/20">
+                <SelectValue placeholder="Select limit" />
+              </SelectTrigger>
+              <SelectContent className="border-white/10 bg-zinc-900">
+                <SelectItem value="10" className="text-white/70 focus:bg-white/10 focus:text-white">
+                  Last 10 movements
+                </SelectItem>
+                <SelectItem value="20" className="text-white/70 focus:bg-white/10 focus:text-white">
+                  Last 20 movements
+                </SelectItem>
+                <SelectItem value="50" className="text-white/70 focus:bg-white/10 focus:text-white">
+                  Last 50 movements
+                </SelectItem>
+                <SelectItem value="100" className="text-white/70 focus:bg-white/10 focus:text-white">
+                  Last 100 movements
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <DarkCheckbox
+            label="Include Low Stock Section"
+            checked={includeLowStock}
+            onChange={setIncludeLowStock}
+          />
+
+          <DarkCheckbox
+            label="Include Recent Movements Section"
+            checked={includeRecentMovements}
+            onChange={setIncludeRecentMovements}
+          />
         </div>
-
-        <DarkCheckbox
-          label="Include Low Stock Section"
-          checked={includeLowStock}
-          onChange={setIncludeLowStock}
-        />
-
-        <DarkCheckbox
-          label="Include Recent Movements Section"
-          checked={includeRecentMovements}
-          onChange={setIncludeRecentMovements}
-        />
       </div>
 
       {report && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div>
+          <div className="mt-5 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
             <ReportStatCard
               label="Total Items"
               value={report.totalItems}
@@ -260,9 +279,12 @@ export default function ReportsPage() {
           </div>
 
           {report.lowStockItems?.length > 0 && (
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h2 className="mb-3 text-lg font-semibold">Low Stock Items</h2>
-              <div className="overflow-x-auto">
+            <div style={PANEL}>
+              <SectionHeader
+                label="LOW STOCK ITEMS"
+                sub={`${report.lowStockItems.length} items need restocking`}
+              />
+              <div className="overflow-x-auto p-4">
                 <table className="min-w-full text-sm">
                   <thead>
                     <tr>
@@ -275,7 +297,7 @@ export default function ReportsPage() {
                   </thead>
                   <tbody>
                     {report.lowStockItems.map((item: any) => (
-                      <tr key={item.sku} className="border-t">
+                      <tr key={item.sku} className="border-t border-white/[0.04]">
                         <td className="px-3 py-2">{item.sku}</td>
                         <td className="px-3 py-2">{item.name}</td>
                         <td className="px-3 py-2">{item.quantity}</td>
@@ -290,9 +312,12 @@ export default function ReportsPage() {
           )}
 
           {report.recentMovements?.length > 0 && (
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h2 className="mb-3 text-lg font-semibold">Recent Movements</h2>
-              <div className="overflow-x-auto">
+            <div style={{ ...PANEL, marginBottom: 24 }}>
+              <SectionHeader
+                label="RECENT MOVEMENTS"
+                sub={`Last ${report.recentMovements.length} movement events`}
+              />
+              <div className="overflow-x-auto p-4">
                 <table className="min-w-full text-sm">
                   <thead>
                     <tr>
@@ -306,7 +331,7 @@ export default function ReportsPage() {
                   </thead>
                   <tbody>
                     {report.recentMovements.map((m: any) => (
-                      <tr key={m.id} className="border-t">
+                      <tr key={m.id} className="border-t border-white/[0.04]">
                         <td className="px-3 py-2">{m.itemName ?? "-"}</td>
                         <td className="px-3 py-2">{m.itemSku ?? "-"}</td>
                         <td className="px-3 py-2">{m.fromZoneName ?? "-"}</td>
