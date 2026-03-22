@@ -39,7 +39,6 @@ export function ViewItemPage() {
     });
 
 
-
     // Handle loading state
     if (isLoading) return (
         <div className="max-w-xl">
