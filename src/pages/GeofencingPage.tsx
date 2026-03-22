@@ -441,7 +441,7 @@ function ViolationLog({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function GeofencingPage() {
+export function GeofencingPage() {
     const queryClient = useQueryClient();
 
     const { data: rules = [], isLoading: rulesLoading } = useQuery<WorkflowRule[]>({
