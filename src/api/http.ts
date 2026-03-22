@@ -19,6 +19,8 @@ import type {
   DashboardReport,
   DashboardReportRequest,
   Warehouse,
+  TagHealth,
+  ReplaceTagRequest,
   InventoryItemUpdateRequest
 } from "../types";
 import type { AuthUser, LoginRequest } from "@/types/index";
@@ -261,6 +263,20 @@ export const api = {
     const res = await http.get<ApiResponse<WorkflowRule[]>>("/api/geofence/rules");
     return res.data.data ?? [];
   },
+
+
+  // ── Tag Health — add these to the api object in http.ts ──────────────────────
+ 
+  getTagHealth: async (): Promise<TagHealth[]> => {
+    const res = await http.get<ApiResponse<TagHealth[]>>("/api/tag-health");
+    return res.data.data;
+  },
+ 
+  replaceTag: async (data: ReplaceTagRequest): Promise<TagHealth> => {
+    const res = await http.post<ApiResponse<TagHealth>>("/api/tag-health/replace", data);
+    return res.data.data;
+  }, 
+
 
   // ── User Management (M1 - Bhanuka) ────────────────────────────────────────────────────────────
   getUsers: async (): Promise<UserResponseDTO[]> => {
