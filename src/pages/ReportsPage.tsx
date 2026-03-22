@@ -10,6 +10,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { FileText, Download } from "lucide-react";
+
+const EVENT_STYLE: Record<string, string> = {
+  MOVEMENT: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+  TAG_REGISTERED: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  ASSIGNED: "bg-orange-500/15 text-orange-400 border-orange-500/30",
+  UNASSIGNED: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
+  TAG_WRITE_SUCCESS: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  TAG_WRITE_FAILED: "bg-red-500/15 text-red-400 border-red-500/30",
+};
+
+function EventBadge({ type }: { type: string }) {
+  const style = EVENT_STYLE[type] ?? "bg-white/10 text-white/50 border-white/10";
+  const label = type.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+  return (
+    <span
+      className={`inline-flex items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] font-semibold ${style}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function fmtTime(iso: string) {
+  const d = new Date(iso);
+  return (
+    d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
+    " · " +
+    d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+  );
+}
 
 export default function ReportsPage() {
   const [recentMovementLimit, setRecentMovementLimit] = useState(10);
@@ -57,6 +89,7 @@ export default function ReportsPage() {
           onClick={() => generateMutation.mutate()}
           disabled={generateMutation.isPending}
         >
+          <FileText size={15} style={{ marginRight: 6 }} />
           {generateMutation.isPending ? "Generating..." : "Generate Report"}
         </Button>
 
@@ -64,14 +97,12 @@ export default function ReportsPage() {
           onClick={() => exportMutation.mutate()}
           disabled={exportMutation.isPending}
         >
+          <Download size={15} style={{ marginRight: 6 }} />
           {exportMutation.isPending ? "Exporting..." : "Download CSV"}
         </Button>
       </PageHeader>
 
-      {/* Filters */}
       <div className="mb-6 grid gap-4 md:grid-cols-3">
-        
-        {/* Custom Select */}
         <div className="rounded-xl border border-border bg-card p-4">
           <label className="text-sm font-medium text-foreground">
             Recent Movements Limit
@@ -84,7 +115,6 @@ export default function ReportsPage() {
             <SelectTrigger className="mt-2 w-full">
               <SelectValue placeholder="Select limit" />
             </SelectTrigger>
-
             <SelectContent>
               <SelectItem value="10">10</SelectItem>
               <SelectItem value="20">20</SelectItem>
@@ -94,7 +124,6 @@ export default function ReportsPage() {
           </Select>
         </div>
 
-        {/* Checkbox 1 */}
         <div className="rounded-xl border border-border bg-card p-4">
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
@@ -106,7 +135,6 @@ export default function ReportsPage() {
           </label>
         </div>
 
-        {/* Checkbox 2 */}
         <div className="rounded-xl border border-border bg-card p-4">
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
@@ -119,10 +147,8 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Report Output */}
       {report && (
         <div className="space-y-6">
-          {/* Stats */}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div className="rounded-xl border border-border bg-card p-4">
               <div className="text-sm text-muted-foreground">Total Items</div>
@@ -145,7 +171,6 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* Low Stock Table */}
           {report.lowStockItems?.length > 0 && (
             <div className="rounded-xl border border-border bg-card p-4">
               <h2 className="mb-3 text-lg font-semibold">Low Stock Items</h2>
@@ -176,7 +201,6 @@ export default function ReportsPage() {
             </div>
           )}
 
-          {/* Movements Table */}
           {report.recentMovements?.length > 0 && (
             <div className="rounded-xl border border-border bg-card p-4">
               <h2 className="mb-3 text-lg font-semibold">Recent Movements</h2>
@@ -199,10 +223,10 @@ export default function ReportsPage() {
                         <td className="px-3 py-2">{m.itemSku ?? "-"}</td>
                         <td className="px-3 py-2">{m.fromZoneName ?? "-"}</td>
                         <td className="px-3 py-2">{m.toZoneName ?? "-"}</td>
-                        <td className="px-3 py-2">{m.eventType}</td>
                         <td className="px-3 py-2">
-                          {new Date(m.occurredAt).toLocaleString()}
+                          <EventBadge type={m.eventType} />
                         </td>
+                        <td className="px-3 py-2">{fmtTime(m.occurredAt)}</td>
                       </tr>
                     ))}
                   </tbody>
