@@ -59,7 +59,7 @@ export interface AuthUser {
   token: string;
   username: string;
   role: string;
-  id : string;
+  id: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -304,4 +304,38 @@ export interface Warehouse {
 // GEOFENCING  (M5 - Daniru)
 // ─────────────────────────────────────────────────────────────────────────────
 // TOOD: GeofencingRule
+// ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface WorkflowRule {
+  from: string;
+  to: string;
+  label: string;
+}
+
+// Re-uses the existing ZoneResponseDTO shape from the backend
+export interface ZoneStatus {
+  id: string;
+  name: string;
+  zoneType: string;
+  capacity: number;
+  currentItemCount: number;
+  status: string;
+  hasHardware: boolean;
+  hardwareName: string | null;
+  hardwareType: string | null;
+  hardwareStatus: string | null;
+}
+
+// Re-uses AlertResponseDTO
+export interface AlertItem {
+  id: string;
+  alertType: string;
+  severity: string;
+  alertStatus: string;
+  message: string | null;
+  zoneId: string | null;
+  zoneName: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+  resolvedByUsername: string | null;
+}
