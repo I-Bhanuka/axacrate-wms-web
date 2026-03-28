@@ -46,8 +46,6 @@ export interface AlertItemDashboard {
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH  (M4 - Pulindu)
 // ─────────────────────────────────────────────────────────────────────────────
-// TODO: loginRequest, AuthUser
-
 export interface LoginRequest {
   username: string;
   password: string;
