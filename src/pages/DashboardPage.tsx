@@ -3,10 +3,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { api } from "../api/http";
 import { QUERY_KEYS } from "../lib/queryClient";
-import { fmtNum, fmtDate, fmtTime } from "../lib/utils";
+import { fmtNum } from "../lib/utils";
 import { PageHeader } from "../components/ui/PageHeader";
 import { StatCard } from "../components/ui/StatCard";
 import { Button } from "../components/ui/button";
@@ -15,11 +14,10 @@ import { Package, Hash, AlertTriangle, Warehouse, RotateCcw } from "lucide-react
 import { SectionHeader } from "../components/dashboardComponents/SectionHeader";
 import { MovementTimeline } from "../components/dashboardComponents/MovementTimeline";
 import { ZoneOccupationCard } from "../components/dashboardComponents/ZoneOccupationCard";
-
+import { RecentAlerts } from "../components/dashboardComponents/RecentAlerts";
 
 
 export function DashboardPage() {
-  const navigate = useNavigate();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.dashboard,
@@ -29,7 +27,7 @@ export function DashboardPage() {
   {/* Movement timeline data */}
   const { data: movements = [] } = useQuery({
     queryKey: ["movements-recent"],
-    queryFn:  () => api.getRecentMovements(12),
+    queryFn:  () => api.getMovements(12),
     refetchInterval: 3_000,
   });
 
@@ -59,9 +57,6 @@ export function DashboardPage() {
         </Button>
       </PageHeader>
 
-      {/* Ahintha TODO: Low stock alert */}
-
-      {/*M1-B*/}
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-5">
         {isLoading ? (
@@ -111,6 +106,15 @@ export function DashboardPage() {
         )}
       </div>
 
+      {/* ── Alerts ────────────────────────────────────── */}
+      <div style={{
+        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 10, overflow: "hidden",
+        marginTop: 20,
+      }}>
+        <SectionHeader label="ALERTS" sub="Latest Alerts" />
+        <RecentAlerts />
+      </div>
 
       {/* ── MOVEMENT TIMELINE ────────────────────────────────────── */}
       <div style={{
@@ -122,14 +126,6 @@ export function DashboardPage() {
         <MovementTimeline movements={movements} />
       </div>
 
-      {/* ── Alerts ────────────────────────────────────── */}
-      <div style={{
-        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
-        borderRadius: 10, overflow: "hidden",
-        marginTop: 20,
-      }}>
-        <SectionHeader label="ALERTS" sub="Lastest Alerts" />
-      </div>
 
       {/* ── Bottom: Zone Ocuupation cards ───────────────────────────────── */}
       <div className="mt-[20px] overflow-hidden rounded-[10px] border border-white/10 bg-white/[0.02]">
@@ -151,11 +147,6 @@ export function DashboardPage() {
 
         </div>
       </div>
-
-      {/* Sheshan TODO: Recent Items Table */}
-      {/* Aatif TODO: Zone Charts*/}
-
-      
       
     </>
   );

@@ -1,27 +1,52 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { api } from "../api/http";
-import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose } from "lucide-react";
+import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users, FileText, Radio } from "lucide-react";
 import logo from "../assets/logo.png";
 import { LiveFeed } from "./LiveFeed";
 
 {/* The Navigation Items */ }
 const NAV_ITEMS = [
-  { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/> },
-  { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/> },
-  { to: "/inventory/create", label: "Create Item", icon: <Plus size={18}/> },
-  { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/> },
-  { to: "/zones", label: "Zones", icon: <Grid size={18}/> },
-  { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/> },
-  { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> },
-  { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> },
+  { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/inventory", label: "Inventory", icon: <Boxes size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/createItem", label: "Create Item", icon: <Plus size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/movements", label: "Movements", icon: <ArrowLeftRight size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/zones", label: "Zones", icon: <Grid size={18}/>, roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/geofencing", label: "Geofencing", icon: <Radar size={18}/>, roles: ["ADMIN", "MANAGER"] },
+  { to: "/tag-health", label: "Tag Health", icon: <Radio size={18}/>, roles: ["ADMIN", "MANAGER","WORKER"] },
+  { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"] },
+  { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"]},
+  { to: "/users", label: "User Management", icon: <Users size={18}/>, roles: ["ADMIN"] },
+  { to: "/reports", label: "Reports", icon: <FileText size={18} /> },
 ];
 
 export function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+
+  {/* State to control the visibility of the sidebar on mobile devices. Initially set to false (hidden) */}
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  {/* State to control the visibility of the live feed sidebar. Initially set to false (hidden) */}
+  const [liveFeedOpen, setLiveFeedOpen] = useState(false);
+
+
+  {/* State to track if the screen size is mobile or desktop. This is used to conditionally render certain elements and apply different styles based on the screen size. Initially set to false (not mobile) */}
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024); // mobile = width < 1024px
+    };
+
+    // Check on first render
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Clean up listener on unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
@@ -57,6 +82,14 @@ export function AppLayout() {
         />
       )}
 
+      {/* Mobile overlay — Live Feed */}
+      {liveFeedOpen && (
+        <div
+          className="fixed inset-0 bg-neutral-900/50 z-[199] lg:hidden"
+          onClick={() => setLiveFeedOpen(false)}
+        />
+      )}
+
       {/* ── Sidebar ── */}
       <aside className={`
         fixed top-0 left-0 h-screen w-[220px] bg-background border-r border-border
@@ -85,7 +118,16 @@ export function AppLayout() {
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 py-2 pt-3">
             Navigation
           </div>
-          {NAV_ITEMS.map(item => (
+
+          {/*
+          Items with no restriction → visible to all
+          Items with restriction → visible only if allowed
+          The condition has to return true for the item to be visible.
+          */}
+          {NAV_ITEMS.filter(item => 
+            !item.roles || item.roles.includes(user?.role ?? "") &&
+            !(isMobile && item.to === "/createItem")  // hide on mobile          
+          ).map(item  => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -124,7 +166,7 @@ export function AppLayout() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="flex-1 flex flex-col lg:ml-[220px] w-full lg:w-[calc(100vw-220px)]">
+      <main className="flex-1 flex flex-col lg:ml-[220px] lg:mr-[260px] min-w-0">
 
         {/* Header */}
         <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-10 gap-3">
@@ -143,15 +185,17 @@ export function AppLayout() {
             </span>
 
           </div>
+
+          {/* User avatar */}
           <div className="flex items-center gap-2 flex-shrink-0">
 
-            {/* Shortcut to create inventory item */}
-            <NavLink
-              to="/inventory/create"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted border border-border rounded-lg hover:bg-muted/80 transition-colors"
+            {/* Live Feed toggle — mobile only */}
+            <button
+              className="lg:hidden p-1.5 rounded-md text-muted-foreground hover:bg-muted"
+              onClick={() => setLiveFeedOpen(o => !o)}
             >
-              <><Plus size={16} style={{ marginRight: 6 }} />New Item</>
-            </NavLink>
+              <Radio size={18} />
+            </button>
 
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-xs font-bold">
               {initials}
@@ -168,8 +212,12 @@ export function AppLayout() {
         </div>
       </main>
 
-      {/* Live feed sidebar */}
-      <LiveFeed user={user} />
+      <LiveFeed
+        user={user}
+        isOpen={liveFeedOpen}
+        onClose={() => setLiveFeedOpen(false)}
+      />
+          
 
     </div>
   );

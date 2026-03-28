@@ -3,9 +3,27 @@ import type {
   ApiResponse,
   DashboardSummary,
   InventoryItem,
+  Alert,
+  CreateAlertRequest,
   InventoryItemCreateRequest,
+  MovementLog,
+  Zone,
+  ZoneCreateRequest,
+  ZoneUpdateRequest,
+  RfidScanResponse,
+  InventoryFilters,
+  PageResponse,
+  UserResponseDTO,
+  CreateUserRequest,
+  LowStockItem,
+  DashboardReport,
+  DashboardReportRequest,
+  Warehouse,
+  TagHealth,
+  ReplaceTagRequest,
+  InventoryItemUpdateRequest
 } from "../types";
-import type { AuthUser, LoginRequest } from "@/types/AuthUser";
+import type { AuthUser, LoginRequest } from "@/types/index";
 
 // Base URL comes from .env file
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
@@ -32,9 +50,20 @@ http.interceptors.response.use(
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
-// API CALLS
-// Add your new endpoint here. Keep them grouped by feature.
+// Geofence types (exported so pages can import from here)
 // ─────────────────────────────────────────────────────────────────────────────
+
+export interface WorkflowRule {
+  fromZone: string;
+  toZone: string;
+  allowed: boolean;
+}
+
+export interface ScannerViolation {
+  scannerName: string;
+  zoneName: string;
+  violationCount: number;
+}
 
 export const api = {
 
@@ -54,6 +83,25 @@ export const api = {
     return res.data.data;
   },
 
+  getDashboardReport: async (
+    data: DashboardReportRequest
+  ): Promise<DashboardReport> => {
+    const res = await http.post<ApiResponse<DashboardReport>>(
+      "/api/reports/dashboard",
+      data
+    );
+    return res.data.data;
+  },
+
+  exportDashboardReportCsv: async (
+    data: DashboardReportRequest
+  ): Promise<Blob> => {
+    const res = await http.post("/api/reports/dashboard/export/csv", data, {
+      responseType: "blob",
+    });
+    return res.data;
+  },
+
   // ── Inventory (M2 - Sheshan) ────────────────────────────────────────────────────────
   // TODO: getItems with filters, getItem by id/sku, create/update/delete item, getLowStock
 
@@ -61,25 +109,209 @@ export const api = {
     const res = await http.post<ApiResponse<InventoryItem>>("/api/inventory/create", data);
     return res.data.data;
   },
-  
+
+  getItems: async (filters: InventoryFilters): Promise<PageResponse<InventoryItem>> => {
+    const { query, page = 0, size = 20, sort = "createdAt,desc", zoneId, minQuantity, maxQuantity } = filters;
+    if (query && query.length >= 3) {
+      const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory/search", {
+        params: { query, page, size },
+      });
+      return res.data.data;
+    }
+    const params: Record<string, unknown> = { page, size, sort };
+    if (zoneId) params.zoneId = zoneId;
+    if (minQuantity !== "") params.minQuantity = minQuantity;
+    if (maxQuantity !== "") params.maxQuantity = maxQuantity;
+    const res = await http.get<ApiResponse<PageResponse<InventoryItem>>>("/api/inventory", { params });
+    return res.data.data;
+  },
+
+  getItem: async (id: string): Promise<InventoryItem> => {
+    const res = await http.get<ApiResponse<InventoryItem>>(`/api/inventory/${id}`);
+    return res.data.data;
+  },
+
+  getItemBySku: async (sku: string): Promise<InventoryItem> => {
+    const res = await http.get<ApiResponse<InventoryItem>>(`/api/inventory/sku/${sku}`);
+    return res.data.data;
+  },
+
+  updateItem: async (sku: string, data: InventoryItemUpdateRequest): Promise<InventoryItem> => {
+    const res = await http.put<ApiResponse<InventoryItem>>(`/api/inventory/${sku}`, data);
+    return res.data.data;
+  },
+
+
+  deleteItem: async (sku: string): Promise<void> => {
+    await http.delete(`/api/inventory/${sku}`);
+  },
+
+
+
+
+
 
   // ── Zones (M3 - Aatif) ────────────────────────────────────────────────────────────
-  // TODO: getZones, getZone by id, create/update zone, getWarehouses for dropdown
+  // TODO: getZone by id, getWarehouses for dropdown
 
+  // Getting all the zones from the database
+  getZones: async (): Promise<Zone[]> => {
+    const res = await http.get<ApiResponse<Zone[]>>("/api/zones");
+    return res.data.data;
+  },
 
-  // ── RFID (M1 - Bhanuka) ─────────────────────────────────────────────────────────────
+  // Getting a specific zone by its name
+  getZoneByName: async (name: string): Promise<Zone> => {
+    const res = await http.get<ApiResponse<Zone>>(`/api/zones/name/${name}`);
+    return res.data.data;
+  },
+
+  // Creating a new zone in the database
+  createZone: async (data: ZoneCreateRequest): Promise<Zone> => {
+    const res = await http.post<ApiResponse<Zone>>("/api/zones", data);
+    return res.data.data;
+  },
+
+  // Updating an existing zone using the warehouse name and zone name as the identifiers
+  updateZone: async (warehouseName: string, name: string, data: ZoneUpdateRequest): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}`, data
+    );
+    return res.data.data;
+  },
+
+  // Disabling a zone by it's warehouse name and zone name
+  disableZone: async (warehouseName: string, name: string): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}/disable`
+    );
+    return res.data.data;
+  },
+
+  // Enabling a zone by it's warehouse name and zone name
+  enableZone: async (warehouseName: string, name: string): Promise<Zone> => {
+    const res = await http.patch<ApiResponse<Zone>>(
+      `/api/zones/warehouse/${warehouseName}/name/${name}/enable`
+    );
+    return res.data.data;
+  },
+
+  // ── RFID (M2 - Sheshan) ─────────────────────────────────────────────────────────────
   // TODO: pollRfid
+  pollRfid: async (): Promise<RfidScanResponse | null> => {
+    const res = await http.get<ApiResponse<RfidScanResponse | null>>("/api/rfid/write-latest");
+    return res.data.data;
+  },
 
 
   // ── Movement Log (M6 - Ahintha) ─────────────────────────────────────────────────────
-  // TODO: getMovements with pagination
-  
+  getMovements: async (limit = 20): Promise<MovementLog[]> => {
+    const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/recent", {
+      params: { limit },
+    });
+    return res.data.data;
+  },
+
+  getRecentActitvity: async (limit = 20): Promise<MovementLog[]> => {
+    const res = await http.get<ApiResponse<MovementLog[]>>("/api/movements/activity", {
+      params: { limit },
+    });
+    return res.data.data;
+  },
+  // ── Low Stock Alerts (M6 - Ahintha) ─────────────────────────────────────────────────────
+  getLowStockItems: async (): Promise<LowStockItem[]> => {
+    const res = await http.get<ApiResponse<LowStockItem[]>>("/api/inventory/low-stock");
+    return res.data.data;
+  },
+
+
+
+  // ── Alerts (M4 - Pulindu) ──────────────────────────────────────────────────────────────
+  getAlerts: async (status?: string): Promise<Alert[]> => {
+    const res = await http.get<ApiResponse<Alert[]>>("/api/alerts", { params: status ? { status } : {} });
+    return res.data.data;
+  },
+
+  getAlertsByZone: async (zoneId: string): Promise<Alert[]> => {
+    const res = await http.get<ApiResponse<Alert[]>>(`/api/zones/${zoneId}/alerts`);
+    return res.data.data;
+  },
+
+  getUnresolvedAlerts: async (): Promise<Alert[]> => {
+    const res = await http.get<ApiResponse<Alert[]>>("/api/alerts/unresolved");
+    return res.data.data;
+  },
+
+  acknowledgeAlert: async (id: string): Promise<Alert> => {
+    const res = await http.put<ApiResponse<Alert>>(`/api/alerts/${id}/acknowledge`);
+    return res.data.data;
+  },
+
+  resolveAlert: async (id: string): Promise<Alert> => {
+    const res = await http.put<ApiResponse<Alert>>(`/api/alerts/${id}/resolve`);
+    return res.data.data;
+  },
+
+  createAlert: async (data: CreateAlertRequest): Promise<Alert> => {
+    const res = await http.post<ApiResponse<Alert>>("/api/alerts", data);
+    return res.data.data;
+  },
+
+
+  // ── Geofence ──────────────────────────────────────────────────────────────
+  getGeofenceRules: async (): Promise<WorkflowRule[]> => {
+    const res = await http.get<ApiResponse<WorkflowRule[]>>("/api/geofence/rules");
+    return res.data.data ?? [];
+  },
+
+
+  // ── Tag Health — add these to the api object in http.ts ──────────────────────
+ 
+  getTagHealth: async (): Promise<TagHealth[]> => {
+    const res = await http.get<ApiResponse<TagHealth[]>>("/api/tag-health");
+    return res.data.data;
+  },
+ 
+  replaceTag: async (data: ReplaceTagRequest): Promise<TagHealth> => {
+    const res = await http.post<ApiResponse<TagHealth>>("/api/tag-health/replace", data);
+    return res.data.data;
+  }, 
+
+
+  // ── User Management (M1 - Bhanuka) ────────────────────────────────────────────────────────────
+  getUsers: async (): Promise<UserResponseDTO[]> => {
+    const res = await http.get<ApiResponse<UserResponseDTO[]>>("/api/admin/users");
+    return res.data.data;
+  },
+
+  createUser: async (data: CreateUserRequest): Promise<UserResponseDTO> => {
+    const res = await http.post<ApiResponse<UserResponseDTO>>("/api/admin/users", data);
+    return res.data.data;
+  },
+
+  updateUserRole: async (id: string, data: { role: string }): Promise<UserResponseDTO> => {
+    const res = await http.put<ApiResponse<UserResponseDTO>>(`/api/admin/users/${id}/role`, data);
+    return res.data.data;
+  },
+
+  deleteUser: async (id: string): Promise<void> => {
+    await http.delete(`/api/admin/users/${id}`);
+  },
+
 
 
   // ── Warehouses (M3 - Aatif) ────────────────────────────────────────────────────────────
-  // TODO: getWarehouses for dropdown
-  
+
+  // Getting all warehouses for the dropdown
+  getWarehouses: async (): Promise<Warehouse[]> => {
+    const res = await http.get<ApiResponse<Warehouse>>("/api/warehouses/all");
+    return res.data.data ? [res.data.data] : [];
+  },
+
+
 };
+
+
 
 // Extend window type for global token storage
 declare global {

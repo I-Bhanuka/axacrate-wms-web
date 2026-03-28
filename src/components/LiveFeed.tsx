@@ -1,13 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { api } from "../api/http";
-import { MoveRight, SearchAlert } from "lucide-react";
+import { MoveRight, SearchAlert, PanelRightClose } from "lucide-react";
 import type { MovementLog, FeedEntry } from "../types";
 
-export function LiveFeed({ user } : { user: { username: string } | null }) {
+
+// After
+interface LiveFeedProps {
+  user: { username: string } | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function LiveFeed({ user, isOpen, onClose }: LiveFeedProps) {
     const [feed, setFeed] = useState<FeedEntry[]>([]);
-    const [pulse, setPulse] = useState(false);
-    const [lastScan, setLastScan] = useState("—");
-    const [scanCount, setScanCount] = useState(0);
+    const [_pulse, setPulse] = useState(false);
+    const [_lastScan, setLastScan] = useState("—");
+    const [_scanCount, setScanCount] = useState(0);
     const seenIds = useRef(new Set<string>());
     const seeded = useRef(false);
 
@@ -22,7 +30,7 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
         {/* poll is an async function that fetches the recent movements from the API and updates the feed */}
         const poll = async () => {
         try {
-            const movements: MovementLog[] = await api.getRecentMovements(20);
+            const movements: MovementLog[] = await api.getRecentActitvity(20);
             if (!movements?.length) return;
 
 
@@ -36,12 +44,13 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
             setFeed(movements.slice(0, 10).map(m => ({
                 id: m.id,
                 itemName: m.itemName ?? "Unknown",
-                fromZone: m.fromZoneName,
-                toZone:   m.toZoneName,
+                fromZone: m.fromZoneName ?? "—",
+                toZone: m.toZoneName ?? "—",
                 time:     new Date(m.occurredAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
                 date:     new Date(m.occurredAt).toLocaleDateString("en-US"),
                 isNew:    false, 
             })));
+            
             seeded.current = true; {/* Mark the feed as seeded */}
             return;
             }
@@ -56,8 +65,8 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
                 const entry: FeedEntry = {
                 id: m.id,
                 itemName: m.itemName ?? "Unknown",
-                fromZone: m.fromZoneName,
-                toZone:   m.toZoneName,
+                fromZone: m.fromZoneName ?? "—",
+                toZone:   m.toZoneName ?? "—",
                 time:     new Date(m.occurredAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
                 date:     new Date(m.occurredAt).toLocaleDateString("en-US"),
                 isNew:    true,
@@ -110,11 +119,17 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
         <>
             {/* LIVE FEED */}
             {/* aside is used for side panels */}
-            <aside className="w-[260px] flex-shrink-0 border-l bg-gray-1000 flex flex-col h-screen">
+            <aside className={`
+            fixed top-0 right-0 h-screen w-[260px] bg-background border-l border-border
+            flex flex-col z-[200] transition-transform duration-200
+            ${isOpen ? "translate-x-0" : "translate-x-full"} lg:translate-x-0
+            `}>
+            
 
                 {/* Header */}
                 <div className="px-4 py-3 flex items-center justify-between">
                 
+                {/* Live feed title with pulsing green dot indicator for new scans */}
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e] animate-pulse" />
                     <span className="text-[12px] font-bold tracking-widest text-gray-400">
@@ -122,9 +137,13 @@ export function LiveFeed({ user } : { user: { username: string } | null }) {
                     </span>
                 </div>
 
-                <span className="text-[12px] text-gray-400 font-mono">
-                    {feed.length} events
-                </span>
+                {/* Mobile close button */}
+                <button
+                    className="lg:hidden text-muted-foreground hover:text-foreground"
+                    onClick={onClose}
+                >
+                    <PanelRightClose size={18} />
+                </button>
 
                 </div>
 
