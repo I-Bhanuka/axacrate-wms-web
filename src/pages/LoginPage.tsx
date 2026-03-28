@@ -48,7 +48,7 @@ export function LoginPage() {
 
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-xl flex-shrink-0">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
             <div className="login-logo-icon"><img src={logo} alt="AxaCrate" style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain" }} /></div>
           </div>
           <div>
