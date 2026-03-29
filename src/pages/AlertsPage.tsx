@@ -14,6 +14,7 @@ import { StatCard } from "../components/ui/StatCard";
 import { Button } from "../components/ui/button";
 import { Skeleton } from "../components/ui/skeleton";
 import { Bell, ShieldAlert, CheckCircle2, Clock, RotateCcw, Filter, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Select,
@@ -51,6 +52,19 @@ const ALERT_TYPE_LABEL: Record<string, string> = {
   OFFLINE_READ:          "Offline Read",
   SYNC_FAILURE:          "Sync Failure",
 };
+
+function playSuccessTone() {
+  const ctx = new AudioContext();
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
+  oscillator.frequency.value = 520;
+  gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+  oscillator.start(ctx.currentTime);
+  oscillator.stop(ctx.currentTime + 0.3);
+}
 
 // ── Status filter tabs ────────────────────────────────────────────────────────
 
@@ -185,13 +199,21 @@ export function AlertsPage() {
   // Acknowledge mutation
   const acknowledgeMutation = useMutation({
     mutationFn: (id: string) => api.acknowledgeAlert(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.alerts.all }),
+    onSuccess: () => {
+      playSuccessTone();
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.alerts.all });
+      toast.success("Alert acknowledged successfully!");
+    },
   });
 
   // Resolve mutation
   const resolveMutation = useMutation({
     mutationFn: (id: string) => api.resolveAlert(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.alerts.all }),
+    onSuccess: () => {
+      playSuccessTone();
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.alerts.all });
+      toast.success("Alert resolved successfully!");
+    },
   });
 
   const isActing = acknowledgeMutation.isPending || resolveMutation.isPending;
