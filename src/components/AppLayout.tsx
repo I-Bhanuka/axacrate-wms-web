@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../store/authStore";
 import { LayoutDashboard, Boxes, Plus, AlertTriangle, Bell, Grid, ArrowLeftRight, Radar, LogOut, Menu, PanelLeftClose, Users, FileText, Radio } from "lucide-react";
 import logo from "../assets/logo.png";
 import { LiveFeed } from "./LiveFeed";
+import { api } from "../api/http";
+import { QUERY_KEYS } from "../lib/queryClient";
+import { fmtRelative } from "../lib/utils";
 
 {/* The Navigation Items */ }
 const NAV_ITEMS = [
@@ -20,6 +24,26 @@ const NAV_ITEMS = [
   { to: "/reports", label: "Reports", icon: <FileText size={18} /> },
 ];
 
+const ALERT_TYPE_LABEL: Record<string, string> = {
+  UNAUTHORIZED_MOVEMENT: "Unauthorized Movement",
+  TAG_MISMATCH: "Tag Mismatch",
+  OFFLINE_READ: "Offline Read",
+  SYNC_FAILURE: "Sync Failure",
+};
+
+const ALERT_STATUS_COLOR: Record<string, string> = {
+  PENDING: "text-yellow-300",
+  ACKNOWLEDGED: "text-blue-300",
+  RESOLVED: "text-green-400",
+};
+
+const ALERT_SEVERITY_COLOR: Record<string, string> = {
+  CRITICAL: "text-red-400",
+  HIGH: "text-orange-400",
+  MEDIUM: "text-yellow-400",
+  LOW: "text-blue-400",
+};
+
 export function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -28,6 +52,8 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   {/* State to control the visibility of the live feed sidebar. Initially set to false (hidden) */}
   const [liveFeedOpen, setLiveFeedOpen] = useState(false);
+  const [alertsOpen, setAlertsOpen] = useState(false);
+  const alertsPanelRef = useRef<HTMLDivElement | null>(null);
 
 
   {/* State to track if the screen size is mobile or desktop. This is used to conditionally render certain elements and apply different styles based on the screen size. Initially set to false (not mobile) */}
@@ -47,6 +73,44 @@ export function AppLayout() {
     // Clean up listener on unmount
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Close the alert panel when clicking outside of it.
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!alertsPanelRef.current) return;
+      if (event.target instanceof Node && !alertsPanelRef.current.contains(event.target)) {
+        setAlertsOpen(false);
+      }
+    };
+
+    if (alertsOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [alertsOpen]);
+
+  const { data: alerts = [] } = useQuery({
+    queryKey: QUERY_KEYS.alerts.all,
+    queryFn: () => api.getAlerts(),
+    refetchInterval: 15_000,
+  });
+
+  const pendingAlertCount = alerts.filter((alert) => alert.alertStatus === "PENDING").length;
+
+  const recentAlerts = useMemo(
+    () =>
+      [...alerts]
+        .sort((a, b) => {
+          const statusOrder = ["PENDING", "ACKNOWLEDGED", "RESOLVED"];
+          const aStatusIndex = statusOrder.indexOf(a.alertStatus);
+          const bStatusIndex = statusOrder.indexOf(b.alertStatus);
+          if (aStatusIndex !== bStatusIndex) return aStatusIndex - bStatusIndex;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        })
+        .slice(0, 6),
+    [alerts]
+  );
 
 
   {/* Get the user's initials for the avatar in the header. If the username is not available, default to "WH" for Warehouse */}
@@ -188,6 +252,72 @@ export function AppLayout() {
 
           {/* User avatar */}
           <div className="flex items-center gap-2 flex-shrink-0">
+
+            <div className="relative" ref={alertsPanelRef}>
+              <button
+                className="relative p-1.5 rounded-md text-muted-foreground hover:bg-muted"
+                onClick={() => setAlertsOpen((open) => !open)}
+                aria-label="Open notifications"
+              >
+                <Bell size={18} />
+                {pendingAlertCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] leading-[18px] font-semibold text-center">
+                    {pendingAlertCount > 99 ? "99+" : pendingAlertCount}
+                  </span>
+                )}
+              </button>
+
+              {alertsOpen && (
+                <div className="absolute right-0 mt-2 w-[320px] max-w-[90vw] rounded-lg border border-border bg-neutral-950 shadow-xl z-30 overflow-hidden">
+                  <div className="px-3 py-2.5 border-b border-border flex items-center justify-between">
+                    <p className="text-sm font-semibold text-foreground">Notifications</p>
+                    <button
+                      className="text-xs text-orange-400 hover:text-orange-300"
+                      onClick={() => {
+                        setAlertsOpen(false);
+                        navigate("/alerts");
+                      }}
+                    >
+                      View all
+                    </button>
+                  </div>
+
+                  {recentAlerts.length === 0 ? (
+                    <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                      No alerts yet.
+                    </div>
+                  ) : (
+                    <div className="max-h-[360px] overflow-y-auto">
+                      {recentAlerts.map((alert) => (
+                        <button
+                          key={alert.id}
+                          onClick={() => {
+                            setAlertsOpen(false);
+                            navigate("/alerts");
+                          }}
+                          className="w-full text-left px-3 py-2.5 border-b border-border/70 bg-neutral-950 hover:bg-neutral-900 transition-colors"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className={`text-[11px] font-semibold ${ALERT_SEVERITY_COLOR[alert.severity] ?? "text-foreground"}`}>
+                              {alert.severity}
+                            </span>
+                            <span className={`text-[11px] ${ALERT_STATUS_COLOR[alert.alertStatus] ?? "text-muted-foreground"}`}>
+                              {alert.alertStatus}
+                            </span>
+                          </div>
+                          <p className="text-xs text-foreground mt-1 truncate">
+                            {ALERT_TYPE_LABEL[alert.alertType] ?? alert.alertType}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground mt-1 truncate">
+                            {alert.zoneName ?? "No zone"} • {fmtRelative(alert.createdAt)}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Live Feed toggle — mobile only */}
             <button
