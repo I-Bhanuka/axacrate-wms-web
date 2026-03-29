@@ -17,7 +17,7 @@ import { Input } from "../components/ui/input";
 import { Skeleton } from "../components/ui/skeleton";
 import { ConfirmModal } from "../components/ui/ConfirmModal";
 import type { InventoryItem } from "../types";
-import { Search, Mailbox } from 'lucide-react';
+import { Search, Mailbox,Trash } from 'lucide-react';
 
 export function InventoryPage() {
     const navigate = useNavigate();
@@ -181,7 +181,7 @@ export function InventoryPage() {
                                         <div className="flex gap-1.5">
                                             <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/${item.id}`)}>View</Button>
                                             <Button size="sm" variant="outline" onClick={() => navigate(`/inventory/edit/${item.sku}`)}>Edit</Button>
-                                            <Button size="sm" variant="destructive" onClick={() => setDeleteTarget(item)}>Del</Button>
+                                            <Button size="sm" variant="destructive" onClick={() => setDeleteTarget(item)}><Trash  className="w-4 h-4" /></Button>
                                         </div>
                                     </td>
                                 </tr>
