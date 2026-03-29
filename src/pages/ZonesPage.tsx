@@ -16,6 +16,7 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from ".
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Plus, Search, Warehouse, Power, PowerOff, Pencil } from "lucide-react";
 import { ZoneBadge } from "../components/ui/ZoneBadge";
+import { toast } from "sonner";
 
 export function ZonesPage() {
   const navigate = useNavigate();
@@ -33,14 +34,44 @@ export function ZonesPage() {
   const disableMutation = useMutation({
     mutationFn: ({ warehouseName, name }: { warehouseName: string; name: string }) =>
       api.disableZone(warehouseName, name),
-    onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all }),
+    onSuccess: (_, variables) => {
+      const ctx = new AudioContext();
+      ctx.resume().then(() => {
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = 520;
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.3);
+      });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+      toast.success(`Zone "${variables.name}" has been disabled`);
+    },
   });
 
   // ── Enable zone mutation ───────────────────────────────────────────────────
   const enableMutation = useMutation({
     mutationFn: ({ warehouseName, name }: { warehouseName: string; name: string }) =>
       api.enableZone(warehouseName, name),
-    onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all }),
+    onSuccess: (_, variables) => {
+      const ctx = new AudioContext();
+      ctx.resume().then(() => {
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = 520;
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.3);
+      });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.zones.all });
+      toast.success(`Zone "${variables.name}" has been enabled`);
+    },
   });
 
   // ── Extract unique warehouse names from zones ──────────────────────────────
