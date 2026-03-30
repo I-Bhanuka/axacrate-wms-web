@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   { to: "/low-stock", label: "Low Stock", icon: <AlertTriangle size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"] },
   { to: "/alerts", label: "Alerts", icon: <Bell size={18}/> , roles: ["ADMIN", "MANAGER", "WORKER"]},
   { to: "/users", label: "User Management", icon: <Users size={18}/>, roles: ["ADMIN"] },
-  { to: "/reports", label: "Reports", icon: <FileText size={18} /> },
+  { to: "/reports", label: "Reports", icon: <FileText size={18} />, roles: ["ADMIN", "MANAGER"] },
 ];
 
 const ALERT_TYPE_LABEL: Record<string, string> = {
