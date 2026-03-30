@@ -340,13 +340,17 @@ export interface AlertItem {
 
 // ── Add these interfaces to src/types/index.ts ────────────────────────────────
  
+// Replace the existing TagHealth interface in src/types/index.ts with this:
+
 export interface TagHealth {
   tagId: string;
   tagUid: string;
   tagStatus: string;
   healthStatus: string;
-  readsLastHour: number;
-  minRequired: number;
+  readsInWindow: number;        // reads in the last 60 seconds
+  windowSeconds: number;        // measurement window (60)
+  readsPerSecond: number;       // calculated frequency
+  minReadsPerSecond: number;    // minimum standard
   inventoryItemId: string | null;
   inventoryItemName: string | null;
   lastSeenZone: string | null;
